@@ -3,2085 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lorway Car | Премиальный Автосалон</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Проект Аполлон: Протокол Трансформации</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary: #0a0a0f;
-            --secondary: #111118;
-            --accent: #00a862;
-            --accent-light: #00c97c;
-            --metal: #c0c0c0;
-            --carbon: #1a1a1a;
-            --text: #f5f5f7;
-            --text-secondary: #a0a0a8;
-            --gradient: linear-gradient(135deg, #0a0a0f 0%, #0f1a15 50%, #0a0a0f 100%);
-            --gradient-green: linear-gradient(135deg, #006241 0%, #00a862 50%, #006241 100%);
-            --gradient-green-light: linear-gradient(135deg, #00a862 0%, #00c97c 50%, #00a862 100%);
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F5F5F4; color: #1C1917; }
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px; 
+            max-height: 400px; 
+        } 
+        @media (min-width: 768px) { 
+            .chart-container { height: 350px; } 
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid #E7E5E4;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-        
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 80px;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--primary);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-            background: var(--gradient);
-            min-height: 100vh;
-            cursor: default;
-        }
-        
-        /* Сетка-фон с геометрическим паттерном */
-        .grid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 200%;
-            z-index: -2;
-            opacity: 0.05;
-            transform: translateY(0);
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(0, 168, 98, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(0, 168, 98, 0.05) 0%, transparent 50%);
-        }
-        
-        /* Плавающие геометрические фигуры */
-        .floating-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        
-        .floating-shape {
-            position: absolute;
-            background: rgba(0, 168, 98, 0.05);
-            border: 1px solid rgba(0, 168, 98, 0.1);
-            opacity: 0;
-            animation: floatShape 25s infinite linear;
-        }
-        
-        .shape-square {
-            width: 80px;
-            height: 80px;
-        }
-        
-        .shape-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-        }
-        
-        .shape-triangle {
-            width: 0;
-            height: 0;
-            border-left: 40px solid transparent;
-            border-right: 40px solid transparent;
-            border-bottom: 69px solid rgba(0, 168, 98, 0.05);
-            background: none;
-        }
-        
-        .floating-shape:nth-child(1) {
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-            animation-duration: 30s;
-        }
-        
-        .floating-shape:nth-child(2) {
-            top: 70%;
-            right: 10%;
-            animation-delay: 5s;
-            animation-duration: 35s;
-        }
-        
-        .floating-shape:nth-child(3) {
-            top: 30%;
-            right: 15%;
-            animation-delay: 10s;
-            animation-duration: 25s;
-        }
-        
-        .floating-shape:nth-child(4) {
-            bottom: 20%;
-            left: 10%;
-            animation-delay: 15s;
-            animation-duration: 40s;
-        }
-        
-        /* Парящие частицы */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0;
-            animation: floatParticle 15s infinite linear;
-            filter: blur(0.5px);
-        }
-        
-        /* Анимации */
-        @keyframes floatShape {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.3;
-            }
-            90% {
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        @keyframes floatParticle {
-            0% {
-                transform: translateY(100vh) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.4;
-            }
-            90% {
-                opacity: 0.4;
-            }
-            100% {
-                transform: translateY(-100px) translateX(100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        @keyframes glow {
-            0%, 100% {
-                text-shadow: 0 0 10px rgba(0, 168, 98, 0.5), 0 0 20px rgba(0, 168, 98, 0.3);
-            }
-            50% {
-                text-shadow: 0 0 20px rgba(0, 168, 98, 0.8), 0 0 40px rgba(0, 168, 98, 0.5);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-15px);
-            }
-        }
-        
-        @keyframes shimmer {
-            0% {
-                background-position: -500px 0;
-            }
-            100% {
-                background-position: 500px 0;
-            }
-        }
-        
-        @keyframes rotateCube {
-            0% {
-                transform: perspective(1000px) rotateX(-15deg) rotateY(0deg) rotateZ(0deg);
-            }
-            100% {
-                transform: perspective(1000px) rotateX(-15deg) rotateY(360deg) rotateZ(0deg);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.6;
-                box-shadow: 0 0 20px rgba(0, 168, 98, 0.3);
-            }
-            50% {
-                opacity: 1;
-                box-shadow: 0 0 40px rgba(0, 168, 98, 0.6);
-            }
-        }
-        
-        @keyframes scanLine {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(400%);
-            }
-        }
-        
-        @keyframes cubeGlow {
-            0%, 100% {
-                filter: drop-shadow(0 0 5px rgba(0, 168, 98, 0.3));
-            }
-            50% {
-                filter: drop-shadow(0 0 20px rgba(0, 168, 98, 0.7));
-            }
-        }
-        
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 168, 98, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        header.scrolled {
-            padding: 15px 40px;
-            background-color: rgba(10, 10, 15, 0.98);
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
-        }
-        
-        .logo {
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo-main {
-            color: var(--text);
-        }
-        
-        .logo-car {
-            color: var(--accent);
-            margin-left: 5px;
-            animation: glow 3s infinite ease-in-out;
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 40px;
-        }
-        
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--gradient-green-light);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--accent);
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .mobile-menu-btn:hover {
-            transform: scale(1.1);
-        }
-        
-        .cta-header {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 10px 24px;
-            border-radius: 50px;
+        .active-tab {
+            border-bottom: 3px solid #D97706;
+            color: #D97706;
             font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            letter-spacing: 0.5px;
         }
-        
-        .cta-header:hover {
-            background-color: rgba(0, 168, 98, 0.1);
-            transform: translateY(-2px);
+        .inactive-tab {
+            color: #78716C;
+            border-bottom: 3px solid transparent;
         }
-        
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            padding: 0 40px;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 70% 30%, rgba(0, 168, 98, 0.1) 0%, transparent 70%);
-            z-index: -1;
-        }
-        
-        .hero-content {
-            max-width: 900px;
-            z-index: 10;
-            animation: fadeInUp 1.5s ease forwards;
-            opacity: 0;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.8rem;
-            font-weight: 300;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        .hero-title {
-            font-size: 5.5rem;
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -2px;
-            margin-bottom: 20px;
-            background: linear-gradient(90deg, var(--text) 0%, var(--accent) 50%, var(--text) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 200% auto;
-            animation: shimmer 3s infinite linear;
-            text-transform: uppercase;
-        }
-        
-        .hero-description {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin-bottom: 50px;
-            max-width: 600px;
-        }
-        
-        .hero-cta {
-            display: flex;
-            gap: 20px;
-        }
-        
-        /* 3D Зеленый куб (игровая кость) */
-        .cube-container {
-            position: absolute;
-            right: 5%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 400px;
-            height: 400px;
-            perspective: 1200px;
-            z-index: 5;
-        }
-        
-        .cube-3d {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: rotateCube 30s infinite linear;
-            transform: rotateX(-15deg);
-        }
-        
-        .cube-face {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(0, 100, 65, 0.8);
-            border: 2px solid rgba(0, 168, 98, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: cubeGlow 3s infinite ease-in-out;
-        }
-        
-        .cube-face::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-green);
-            opacity: 0.8;
-        }
-        
-        .cube-front {
-            transform: translateZ(150px);
-            background: rgba(0, 80, 55, 0.9);
-        }
-        
-        .cube-back {
-            transform: rotateY(180deg) translateZ(150px);
-            background: rgba(0, 90, 60, 0.9);
-        }
-        
-        .cube-right {
-            transform: rotateY(90deg) translateZ(150px);
-            background: rgba(0, 100, 65, 0.9);
-        }
-        
-        .cube-left {
-            transform: rotateY(-90deg) translateZ(150px);
-            background: rgba(0, 110, 70, 0.9);
-        }
-        
-        .cube-top {
-            transform: rotateX(90deg) translateZ(150px);
-            background: rgba(0, 120, 75, 0.9);
-        }
-        
-        .cube-bottom {
-            transform: rotateX(-90deg) translateZ(150px);
-            background: rgba(0, 130, 80, 0.9);
-        }
-        
-        .cube-dot {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        
-        .cube-front .cube-dot:nth-child(1) { top: 50px; left: 50px; }
-        .cube-front .cube-dot:nth-child(2) { top: 50px; right: 50px; }
-        .cube-front .cube-dot:nth-child(3) { top: 125px; left: 125px; }
-        .cube-front .cube-dot:nth-child(4) { bottom: 50px; left: 50px; }
-        .cube-front .cube-dot:nth-child(5) { bottom: 50px; right: 50px; }
-        
-        .cube-back .cube-dot:nth-child(1) { top: 50px; left: 125px; }
-        .cube-back .cube-dot:nth-child(2) { bottom: 125px; left: 125px; }
-        
-        .cube-right .cube-dot:nth-child(1) { top: 50px; left: 50px; }
-        .cube-right .cube-dot:nth-child(2) { top: 125px; left: 125px; }
-        .cube-right .cube-dot:nth-child(3) { bottom: 50px; right: 50px; }
-        
-        .cube-left .cube-dot:nth-child(1) { top: 50px; left: 125px; }
-        .cube-left .cube-dot:nth-child(2) { top: 125px; left: 50px; }
-        .cube-left .cube-dot:nth-child(3) { top: 125px; right: 50px; }
-        .cube-left .cube-dot:nth-child(4) { bottom: 125px; left: 125px; }
-        
-        .cube-top .cube-dot:nth-child(1) { top: 50px; left: 50px; }
-        .cube-top .cube-dot:nth-child(2) { top: 50px; right: 50px; }
-        .cube-top .cube-dot:nth-child(3) { bottom: 50px; left: 50px; }
-        .cube-top .cube-dot:nth-child(4) { bottom: 50px; right: 50px; }
-        .cube-top .cube-dot:nth-child(5) { top: 125px; left: 125px; }
-        .cube-top .cube-dot:nth-child(6) { bottom: 125px; left: 125px; }
-        
-        .cube-bottom .cube-dot:nth-child(1) { top: 50px; left: 125px; }
-        .cube-bottom .cube-dot:nth-child(2) { top: 125px; left: 50px; }
-        .cube-bottom .cube-dot:nth-child(3) { top: 125px; right: 50px; }
-        .cube-bottom .cube-dot:nth-child(4) { bottom: 125px; left: 50px; }
-        .cube-bottom .cube-dot:nth-child(5) { bottom: 125px; right: 50px; }
-        .cube-bottom .cube-dot:nth-child(6) { bottom: 50px; left: 125px; }
-        
-        .cube-glow {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(0, 168, 98, 0.2) 0%, transparent 70%);
-            animation: pulse 4s infinite ease-in-out;
-        }
-        
-        /* Кнопки */
-        .btn {
-            padding: 16px 36px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            border: none;
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 0.5px;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(0, 168, 98, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .btn-primary {
-            background: var(--gradient-green-light);
-            color: white;
-            z-index: 1;
-            box-shadow: 0 10px 30px rgba(0, 100, 65, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 100, 65, 0.5);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--text-secondary);
-            color: var(--text);
-            z-index: 1;
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-5px);
-        }
-        
-        /* Models Section */
-        .models {
-            padding: 150px 40px;
-            position: relative;
-        }
-        
-        .section-title {
-            font-size: 3.5rem;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 80px;
-            letter-spacing: -1px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.3s;
-            text-transform: uppercase;
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: var(--gradient-green-light);
-        }
-        
-        .models-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .model-card {
-            background: rgba(20, 25, 22, 0.7);
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(0, 168, 98, 0.1);
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        
-        .model-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(0, 168, 98, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .model-image {
-            height: 250px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .model-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .model-card:hover .model-image img {
-            transform: scale(1.1);
-        }
-        
-        .model-info {
-            padding: 30px;
-        }
-        
-        .model-name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .model-badge {
-            background: var(--gradient-green-light);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-left: 15px;
-        }
-        
-        .model-price {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--accent);
-            margin-bottom: 15px;
-        }
-        
-        .model-features {
-            list-style: none;
-            margin-bottom: 25px;
-        }
-        
-        .model-features li {
-            margin-bottom: 10px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-        }
-        
-        .model-features i {
-            color: var(--accent);
-            margin-right: 10px;
-            font-size: 0.9rem;
-            min-width: 20px;
-        }
-        
-        /* Stats Section */
-        .stats {
-            padding: 100px 40px;
-            background: rgba(15, 20, 17, 0.7);
-            position: relative;
-        }
-        
-        .stats::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent 30%, rgba(0, 168, 98, 0.05) 50%, transparent 70%);
-            animation: scanLine 8s infinite linear;
-        }
-        
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .stat-card {
-            text-align: center;
-            padding: 40px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            border: 1px solid rgba(0, 168, 98, 0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(0, 168, 98, 0.3);
-        }
-        
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            background: var(--gradient-green-light);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .stat-label {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-        }
-        
-        /* Features Section - Исправленные блоки */
-        .features {
-            padding: 150px 40px;
-            background: rgba(15, 20, 17, 0.7);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .features-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-        
-        .feature-card {
-            background: rgba(20, 25, 22, 0.7);
-            border-radius: 20px;
-            padding: 40px 30px;
-            border: 1px solid rgba(0, 168, 98, 0.1);
-            transition: all 0.4s ease;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(0, 168, 98, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient-green-light);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-            transform-origin: left;
-        }
-        
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 25px;
-            color: var(--accent);
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-        
-        .feature-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-        
-        .feature-description {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        
-        /* Cars Gallery */
-        .gallery {
-            padding: 150px 40px;
-            position: relative;
-        }
-        
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .gallery-item {
-            position: relative;
-            height: 300px;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 168, 98, 0.1);
-            transition: all 0.4s ease;
-        }
-        
-        .gallery-item:hover {
-            transform: translateY(-10px);
-            border-color: rgba(0, 168, 98, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .gallery-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .gallery-item:hover .gallery-image {
-            transform: scale(1.1);
-        }
-        
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 25px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-        }
-        
-        .gallery-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .gallery-subtitle {
-            font-size: 1rem;
-            color: var(--accent);
-        }
-        
-        /* Test Drive Form */
-        .test-drive {
-            padding: 150px 40px;
-            position: relative;
-        }
-        
-        .test-drive-form {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(20, 25, 22, 0.7);
-            border-radius: 20px;
-            padding: 60px;
-            border: 1px solid rgba(0, 168, 98, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .form-title {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin-bottom: 40px;
-            text-align: center;
-            background: var(--gradient-green-light);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(0, 168, 98, 0.2);
-        }
-        
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-        
-        /* Footer */
-        footer {
-            padding: 80px 40px 40px;
-            border-top: 1px solid rgba(0, 168, 98, 0.1);
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 60px;
-            flex-wrap: wrap;
-        }
-        
-        .footer-logo {
-            font-size: 28px;
-            font-weight: 900;
-            margin-bottom: 20px;
-        }
-        
-        .footer-links {
-            display: flex;
-            gap: 60px;
-        }
-        
-        .footer-column h4 {
-            font-size: 1.2rem;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-        
-        .footer-column ul {
-            list-style: none;
-        }
-        
-        .footer-column li {
-            margin-bottom: 15px;
-        }
-        
-        .footer-column a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-column a:hover {
-            color: var(--accent);
-        }
-        
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .social-icons a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            color: var(--text);
-            transition: all 0.3s ease;
-        }
-        
-        .social-icons a:hover {
-            background: var(--accent);
-            color: var(--primary);
-            transform: translateY(-5px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        /* Адаптивность */
-        @media (max-width: 1200px) {
-            .cube-container {
-                width: 350px;
-                height: 350px;
-                right: 0;
-            }
-            
-            .cube-face {
-                width: 250px;
-                height: 250px;
-            }
-            
-            .cube-front, .cube-back {
-                transform: translateZ(125px);
-            }
-            
-            .cube-right, .cube-left {
-                transform: rotateY(90deg) translateZ(125px);
-            }
-            
-            .cube-top, .cube-bottom {
-                transform: rotateX(90deg) translateZ(125px);
-            }
-            
-            .cube-dot {
-                width: 40px;
-                height: 40px;
-            }
-            
-            .hero-title {
-                font-size: 4.5rem;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .hero-title {
-                font-size: 3.5rem;
-            }
-            
-            .cube-container {
-                position: relative;
-                top: auto;
-                right: auto;
-                transform: none;
-                margin: 80px auto 0;
-                width: 300px;
-                height: 300px;
-            }
-            
-            .cube-face {
-                width: 200px;
-                height: 200px;
-            }
-            
-            .cube-front, .cube-back {
-                transform: translateZ(100px);
-            }
-            
-            .cube-right, .cube-left {
-                transform: rotateY(90deg) translateZ(100px);
-            }
-            
-            .cube-top, .cube-bottom {
-                transform: rotateX(90deg) translateZ(100px);
-            }
-            
-            .cube-dot {
-                width: 30px;
-                height: 30px;
-            }
-            
-            .hero {
-                flex-direction: column;
-                justify-content: center;
-                text-align: center;
-                padding-top: 120px;
-                height: auto;
-                min-height: 100vh;
-            }
-            
-            .hero-content {
-                margin-bottom: 80px;
-            }
-            
-            .hero-cta {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .nav-links.active {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: rgba(10, 10, 15, 0.98);
-                padding: 30px;
-                border-top: 1px solid rgba(0, 168, 98, 0.1);
-            }
-            
-            .nav-links.active li {
-                margin: 15px 0;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                gap: 40px;
-            }
-            
-            .footer-links {
-                flex-wrap: wrap;
-                gap: 40px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            header, .hero, .models, .stats, .features, .gallery, .test-drive, footer {
-                padding-left: 20px;
-                padding-right: 20px;
-            }
-            
-            .hero-title {
-                font-size: 2.8rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.4rem;
-            }
-            
-            .section-title {
-                font-size: 2.5rem;
-            }
-            
-            .cube-container {
-                width: 250px;
-                height: 250px;
-            }
-            
-            .cube-face {
-                width: 160px;
-                height: 160px;
-            }
-            
-            .cube-front, .cube-back {
-                transform: translateZ(80px);
-            }
-            
-            .cube-right, .cube-left {
-                transform: rotateY(90deg) translateZ(80px);
-            }
-            
-            .cube-top, .cube-bottom {
-                transform: rotateX(90deg) translateZ(80px);
-            }
-            
-            .cube-dot {
-                width: 25px;
-                height: 25px;
-            }
-            
-            .test-drive-form {
-                padding: 40px 30px;
-            }
-            
-            .stat-number {
-                font-size: 2.8rem;
-            }
-            
-            .models-grid, .features-grid, .gallery-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero-title {
-                font-size: 2.2rem;
-            }
-            
-            .hero-cta {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
-                text-align: center;
-            }
-            
-            .cube-container {
-                width: 200px;
-                height: 200px;
-            }
-            
-            .cube-face {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .cube-front, .cube-back {
-                transform: translateZ(60px);
-            }
-            
-            .cube-right, .cube-left {
-                transform: rotateY(90deg) translateZ(60px);
-            }
-            
-            .cube-top, .cube-bottom {
-                transform: rotateX(90deg) translateZ(60px);
-            }
-            
-            .cube-dot {
-                width: 18px;
-                height: 18px;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .hero-title {
-                font-size: 1.8rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
+        .inactive-tab:hover {
+            color: #44403C;
         }
     </style>
+    <!-- Chosen Palette: Warm Neutrals (Stone) with Amber Accents. Minimalistic, stoic, and focused. -->
+    <!-- Application Structure Plan: 
+         1. Dashboard (HUD): Overview of current "character stats" based on user input (13yo, 84kg, 181cm) vs Target.
+         2. Diagnosis Module: Interactive analysis of why previous attempts (dopamine detox, 5-min rule) failed.
+         3. Bio-Mechanics (The "Course"): Scientific explanation of laziness as energy conservation + the solution (Micro-Habit Stacking, not motivation).
+         4. Action Protocols: 
+            - Body (No bar workout logic)
+            - Mind (Wealth/Intellect)
+            - Responsibility (The Cat/Self-care)
+         5. Daily Quest Log: A gamified tracker to start the momentum.
+    -->
+    <!-- Visualization & Content Choices:
+         - Radar Chart: To visualize "Character Attributes" (Strength, Intellect, Discipline, Wealth) - Current vs Potential. Goal: Show the gap and potential.
+         - Line Chart: To simulate "Motivation vs Discipline" over time (The Crash Curve). Goal: Explain why he quits after 3 days.
+         - Interactive Cards: For the Workout and Cat Care protocols. Goal: Organizing tasks without overwhelming.
+         - Justification: Users with ADHD/Lazy tendencies need immediate visual feedback and clear, bite-sized structures.
+         - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body>
-    <!-- Геометрический фон -->
-    <div class="grid-bg" id="gridBg"></div>
-    
-    <!-- Плавающие геометрические фигуры -->
-    <div class="floating-shapes">
-        <div class="floating-shape shape-square"></div>
-        <div class="floating-shape shape-circle"></div>
-        <div class="floating-shape shape-triangle"></div>
-        <div class="floating-shape shape-square"></div>
-    </div>
-    
-    <!-- Парящие частицы -->
-    <div class="particles" id="particles"></div>
-    
-    <!-- Header -->
-    <header id="header">
-        <div class="logo">
-            <span class="logo-main">LORWAY</span>
-            <span class="logo-car">CAR</span>
-        </div>
-        
-        <button class="mobile-menu-btn" id="mobileMenuBtn">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#models">Модели</a></li>
-            <li><a href="#features">Преимущества</a></li>
-            <li><a href="#gallery">Галерея</a></li>
-            <li><a href="#test-drive">Тест-драйв</a></li>
-            <li><a href="#about">О нас</a></li>
-        </ul>
-        
-        <a href="#test-drive" class="cta-header">Тест-драйв</a>
-    </header>
-    
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h2 class="hero-subtitle">Experience Premium</h2>
-            <h1 class="hero-title">AUTOMOTIVE LUXURY</h1>
-            <p class="hero-description">Откройте для себя новый уровень автомобильного совершенства — дизайн, производительность, эмоции. Премиальные автомобили с точной инженерией и уникальным характером.</p>
-            <div class="hero-cta">
-                <a href="#models" class="btn btn-primary">Исследовать модели</a>
-                <a href="#test-drive" class="btn btn-secondary">Забронировать тест-драйв</a>
-            </div>
-        </div>
-        
-        <!-- 3D Зеленый куб (игровая кость) -->
-        <div class="cube-container">
-            <div class="cube-3d">
-                <div class="cube-face cube-front">
-                    <div class="cube-glow"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
+<body class="bg-stone-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <span class="text-2xl font-extrabold tracking-tight text-stone-800">ПРОЕКТ <span class="text-amber-600">АПОЛЛОН</span></span>
                 </div>
-                <div class="cube-face cube-back">
-                    <div class="cube-glow"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="active-tab px-1 pt-1 text-sm font-medium transition-colors">Статус</button>
+                    <button onclick="switchTab('analysis')" id="nav-analysis" class="inactive-tab px-1 pt-1 text-sm font-medium transition-colors">Анализ Сбоев</button>
+                    <button onclick="switchTab('protocol')" id="nav-protocol" class="inactive-tab px-1 pt-1 text-sm font-medium transition-colors">Протокол Действий</button>
                 </div>
-                <div class="cube-face cube-right">
-                    <div class="cube-glow"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                </div>
-                <div class="cube-face cube-left">
-                    <div class="cube-glow"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                </div>
-                <div class="cube-face cube-top">
-                    <div class="cube-glow"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                </div>
-                <div class="cube-face cube-bottom">
-                    <div class="cube-glow"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
-                    <div class="cube-dot"></div>
+                <!-- Mobile Menu Button (Simple) -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-stone-500 hover:text-stone-800 font-bold">МЕНЮ</button>
                 </div>
             </div>
         </div>
-    </section>
-    
-    <!-- Models Section -->
-    <section class="models" id="models">
-        <h2 class="section-title">Элитные модели</h2>
-        
-        <div class="models-grid">
-            <div class="model-card">
-                <div class="model-image">
-                    <img src="https://i.ytimg.com/vi/eK-5hl3995k/maxresdefault.jpg">
-                </div>
-                <div class="model-info">
-                    <h3 class="model-name">Porsche 911 Turbo S <span class="model-badge">Новинка</span></h3>
-                    <div class="model-price">от 15.900.000 ₽</div>
-                    <ul class="model-features">
-                        <li><i class="fas fa-tachometer-alt"></i> 650 л.с. • 800 Нм</li>
-                        <li><i class="fas fa-rocket"></i> 0-100 км/ч: 2.7 секунды</li>
-                        <li><i class="fas fa-gas-pump"></i> 11.4 л/100 км (смешанный цикл)</li>
-                        <li><i class="fas fa-cogs"></i> 8-ступенчатая PDK коробка</li>
-                    </ul>
-                    <a href="#test-drive" class="btn btn-primary" style="width: 100%;">Забронировать тест-драйв</a>
-                </div>
-            </div>
-            
-            <div class="model-card">
-                <div class="model-image">
-                    <img src="https://i.ytimg.com/vi/5d9NafE6Apg/maxresdefault.jpg" alt="Mercedes S-Class">
-                </div>
-                <div class="model-info">
-                    <h3 class="model-name">Mercedes-Benz S 580 <span class="model-badge">Премиум</span></h3>
-                    <div class="model-price">от 12.500.000 ₽</div>
-                    <ul class="model-features">
-                        <li><i class="fas fa-tachometer-alt"></i> 503 л.с. • 700 Нм</li>
-                        <li><i class="fas fa-rocket"></i> 0-100 км/ч: 4.4 секунды</li>
-                        <li><i class="fas fa-gas-pump"></i> 9.4 л/100 км (смешанный цикл)</li>
-                        <li><i class="fas fa-cogs"></i> 9-ступенчатая 9G-Tronic</li>
-                    </ul>
-                    <a href="#test-drive" class="btn btn-primary" style="width: 100%;">Забронировать тест-драйв</a>
-                </div>
-            </div>
-            
-            <div class="model-card">
-                <div class="model-image">
-                    <img src="https://avatars.mds.yandex.net/get-autoru-vos/2069642/4719e0f95cd7f173e3f7430c78303c4f/1200x900" alt="BMW M8">
-                </div>
-                <div class="model-info">
-                    <h3 class="model-name">BMW M8 Competition <span class="model-badge">Спорт</span></h3>
-                    <div class="model-price">от 14.200.000 ₽</div>
-                    <ul class="model-features">
-                        <li><i class="fas fa-tachometer-alt"></i> 625 л.с. • 750 Нм</li>
-                        <li><i class="fas fa-rocket"></i> 0-100 км/ч: 3.2 секунды</li>
-                        <li><i class="fas fa-gas-pump"></i> 12.3 л/100 км (смешанный цикл)</li>
-                        <li><i class="fas fa-cogs"></i> 8-ступенчатый Steptronic</li>
-                    </ul>
-                    <a href="#test-drive" class="btn btn-primary" style="width: 100%;">Забронировать тест-драйв</a>
-                </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-stone-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <button onclick="switchTab('dashboard')" class="block w-full text-left px-3 py-2 text-stone-700 font-medium hover:bg-stone-50">Статус</button>
+                <button onclick="switchTab('analysis')" class="block w-full text-left px-3 py-2 text-stone-700 font-medium hover:bg-stone-50">Анализ Сбоев</button>
+                <button onclick="switchTab('protocol')" class="block w-full text-left px-3 py-2 text-stone-700 font-medium hover:bg-stone-50">Протокол</button>
             </div>
         </div>
-    </section>
-    
-    <!-- Stats Section -->
-    <section class="stats" id="about">
-        <h2 class="section-title">Lorway Car в цифрах</h2>
-        
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-number" id="yearsCount">0</div>
-                <div class="stat-label">Лет на рынке</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-number" id="clientsCount">0</div>
-                <div class="stat-label">Довольных клиентов</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-number" id="carsSoldCount">0</div>
-                <div class="stat-label">Автомобилей продано</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-number" id="brandsCount">0</div>
-                <div class="stat-label">Премиальных брендов</div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <h2 class="section-title">Наши преимущества</h2>
-        
-        <div class="features-content">
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 60px; font-size: 1.2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-                Мы предлагаем полный спектр услуг для истинных ценителей автомобильной роскоши.
-            </p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Расширенная гарантия</h3>
-                    <p class="feature-description">5 лет гарантии на все автомобили, включая полное техническое обслуживание и поддержку 24/7.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-cog"></i>
-                    </div>
-                    <h3 class="feature-title">Индивидуальная настройка</h3>
-                    <p class="feature-description">Полная персонализация вашего автомобиля: от цвета кузова до отделки салона эксклюзивными материалами.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-concierge-bell"></i>
-                    </div>
-                    <h3 class="feature-title">Консьерж-сервис</h3>
-                    <p class="feature-description">Персональный менеджер для каждого клиента, решающий все вопросы от покупки до обслуживания.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-sync-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Программа обновления</h3>
-                    <p class="feature-description">Возможность обновить автомобиль через 2-3 года с минимальными финансовыми затратами.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-key"></i>
-                    </div>
-                    <h3 class="feature-title">Доставка и ввод в эксплуатацию</h3>
-                    <p class="feature-description">Бесплатная доставка по России, полная подготовка автомобиля и обучение владельца.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h3 class="feature-title">Трейд-ин на выгодных условиях</h3>
-                    <p class="feature-description">Высокая оценка вашего текущего автомобиля при обмене на новую модель из нашего салона.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Gallery Section -->
-    <section class="gallery" id="gallery">
-        <h2 class="section-title">Автомобильная галерея</h2>
-        
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img src="https://i.ytimg.com/vi/xYSix5r38qY/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgWyhbMA8=&rs=AOn4CLBsrWdXhTqjmID1iu18FH4rjOdSOg" alt="Car Headlights" class="gallery-image">
-                <div class="gallery-overlay">
-                    <h3 class="gallery-title">LED технология</h3>
-                    <p class="gallery-subtitle">Адаптивное матричное освещение</p>
-                </div>
-            </div>
-            
-            <div class="gallery-item">
-                <img src="https://i.pinimg.com/originals/a3/be/7a/a3be7aefc589ddc91ec4144091073071.jpg" alt="Car Interior" class="gallery-image">
-                <div class="gallery-overlay">
-                    <h3 class="gallery-title">Роскошный салон</h3>
-                    <p class="gallery-subtitle">Кожа Nappa, деревянные вставки</p>
-                </div>
-            </div>
-            
-            <div class="gallery-item">
-                <img src="https://avatars.mds.yandex.net/i?id=1485737e159e85f48c709dd750e2ca1b_l-5234369-images-thumbs&n=13" alt="Car Dashboard" class="gallery-image">
-                <div class="gallery-overlay">
-                    <h3 class="gallery-title">Цифровая панель</h3>
-                    <p class="gallery-subtitle">12.3" дисплей, голосовое управление</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Test Drive Form Section -->
-    <section class="test-drive" id="test-drive">
-        <h2 class="section-title">Забронируйте тест-драйв</h2>
-        
-        <div class="test-drive-form">
-            <h3 class="form-title">Испытайте мощь</h3>
-            
-            <form id="testDriveForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Имя *</label>
-                        <input type="text" class="form-input" placeholder="Ваше имя" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Фамилия *</label>
-                        <input type="text" class="form-input" placeholder="Ваша фамилия" required>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Телефон *</label>
-                        <input type="tel" class="form-input" placeholder="+7 (XXX) XXX-XX-XX" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Email *</label>
-                        <input type="email" class="form-input" placeholder="Ваш email" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Модель автомобиля *</label>
-                    <select class="form-select" required>
-                        <option value="">Выберите модель</option>
-                        <option value="porsche">Porsche 911 Turbo S</option>
-                        <option value="mercedes">Mercedes-Benz S 580</option>
-                        <option value="bmw">BMW M8 Competition</option>
-                        <option value="audi">Audi RS7 Sportback</option>
-                        <option value="lexus">Lexus LS 500</option>
-                        <option value="other">Другая модель</option>
-                    </select>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Предпочтительная дата *</label>
-                        <input type="date" class="form-input" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Предпочтительное время *</label>
-                        <select class="form-select" required>
-                            <option value="">Выберите время</option>
-                            <option value="10:00">10:00</option>
-                            <option value="12:00">12:00</option>
-                            <option value="14:00">14:00</option>
-                            <option value="16:00">16:00</option>
-                            <option value="18:00">18:00</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Дополнительные пожелания</label>
-                    <textarea class="form-textarea" placeholder="Особые требования, маршрут, вопросы..."></textarea>
-                </div>
-                
-                <div class="form-group" style="text-align: center; margin-top: 40px;">
-                    <button type="submit" class="btn btn-primary" style="padding: 18px 50px; font-size: 18px;">Забронировать тест-драйв</button>
-                </div>
-                
-                <p style="text-align: center; color: var(--text-secondary); margin-top: 30px; font-size: 0.9rem;">
-                    * Наш менеджер свяжется с вами в течение 2 часов для подтверждения бронирования.
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard" class="space-y-8">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <h1 class="text-3xl font-bold text-stone-900 mb-4">Панель Управления: Субъект "Макс"</h1>
+                <p class="text-lg text-stone-600">
+                    Добро пожаловать в центр управления твоей трансформацией. Здесь мы анализируем текущие показатели и строим маршрут к версии "Аполлон".
+                    Твоя цель — стать машиной. Машины не используют "мотивацию", они используют системы.
                 </p>
-            </form>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-column">
-                <div class="footer-logo">LORWAY CAR</div>
-                <p style="max-width: 300px;">Премиальный автосалон с 1998 года. Эксклюзивные автомобили, индивидуальный сервис, непревзойденное качество.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-telegram"></i></a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Stats Radar -->
+                <div class="glass-panel p-6 rounded-xl">
+                    <div class="mb-4">
+                        <h2 class="text-xl font-bold text-stone-800">Текущий Анализ Характеристик</h2>
+                        <p class="text-sm text-stone-500">Сравнение текущего состояния (Синий) с Целевым (Оранжевый).</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="statsChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-xs text-stone-400 text-center">
+                        * Данные основаны на твоем отчете: 13 лет, 84кг, 181см, опыт срывов.
+                    </div>
+                </div>
+
+                <!-- Bio-Data Card -->
+                <div class="glass-panel p-6 rounded-xl flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-stone-800 mb-4">Биометрия & Цели</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <span class="text-stone-500">Возраст</span>
+                                <span class="font-bold text-stone-800">13 (почти 14)</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <span class="text-stone-500">Рост / Вес</span>
+                                <span class="font-bold text-stone-800">181 см / 84 кг</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <span class="text-stone-500">Телосложение</span>
+                                <span class="font-bold text-amber-600">Требуется рекомпозиция</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <span class="text-stone-500">Статус Дисциплины</span>
+                                <span class="font-bold text-red-600">Критический (Срывы &lt; 3 дней)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-amber-50 p-4 rounded-lg border border-amber-100">
+                        <h3 class="font-bold text-amber-800 mb-2">Миссия:</h3>
+                        <p class="text-sm text-amber-700 italic">"Стать накаченной, сильной, умной, богатой машиной. Оратор как Ницше, тело как Аполлон."</p>
+                    </div>
+                    <button onclick="switchTab('analysis')" class="mt-6 w-full py-3 bg-stone-900 text-white font-bold rounded-lg hover:bg-stone-700 transition-all">
+                        НАЧАТЬ ДИАГНОСТИКУ >>
+                    </button>
                 </div>
             </div>
+        </div>
+
+        <!-- ANALYSIS SECTION -->
+        <div id="analysis" class="hidden space-y-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-4">Почему "Ничего не работает"?</h2>
+                    <p class="text-stone-600">
+                        Ты пробовал "правило 5 минут", споры на деньги, ТикТок, дофаминовый детокс. Исход один: кровать.
+                        Давай разберем это научно. Это не потому, что ты "слабый". Это ошибка нейрохимии.
+                    </p>
+                </div>
+
+                <!-- The Cycle of Failure Chart -->
+                <div class="glass-panel p-6 rounded-xl mb-8">
+                    <h3 class="text-lg font-bold text-stone-800 mb-2">Цикл "Всплеск-Крах" (The Crash Cycle)</h3>
+                    <p class="text-sm text-stone-500 mb-4">Это график твоей мотивации в типичную неделю.</p>
+                    <div class="chart-container">
+                        <canvas id="motivationChart"></canvas>
+                    </div>
+                    <div class="mt-4 bg-stone-50 p-4 rounded text-sm text-stone-700 border-l-4 border-red-500">
+                        <strong>Вердикт:</strong> Ты сжигаешь весь свой запас воли в первый день ("делаю час вместо 5 минут").
+                        Мозг воспринимает это как стресс. На следующий день он включает защитный механизм — лень.
+                        Лень — это не порок, это <em>предохранитель</em> от перегрева.
+                    </div>
+                </div>
+
+                <!-- Interaction: Why Methods Failed -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-stone-200 cursor-pointer hover:border-amber-400 transition-all" onclick="showInsight('detox')">
+                        <div class="text-2xl mb-2">🧘‍♂️</div>
+                        <h4 class="font-bold">Дофаминовый Детокс</h4>
+                        <p class="text-xs text-stone-500 mt-1">Почему не сработал?</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-stone-200 cursor-pointer hover:border-amber-400 transition-all" onclick="showInsight('bet')">
+                        <div class="text-2xl mb-2">💸</div>
+                        <h4 class="font-bold">Спор на деньги</h4>
+                        <p class="text-xs text-stone-500 mt-1">Почему не сработал?</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-stone-200 cursor-pointer hover:border-amber-400 transition-all" onclick="showInsight('tiktok')">
+                        <div class="text-2xl mb-2">📱</div>
+                        <h4 class="font-bold">Публичные обещания</h4>
+                        <p class="text-xs text-stone-500 mt-1">Почему не сработал?</p>
+                    </div>
+                </div>
+
+                <!-- Dynamic Insight Box -->
+                <div id="insight-box" class="mt-6 p-6 bg-stone-800 text-stone-100 rounded-lg hidden">
+                    <h4 id="insight-title" class="text-xl font-bold mb-2 text-amber-400"></h4>
+                    <p id="insight-text" class="leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROTOCOL SECTION -->
+        <div id="protocol" class="hidden space-y-12">
             
-            <div class="footer-links">
-                <div class="footer-column">
-                    <h4>Автомобили</h4>
-                    <ul>
-                        <li><a href="#models">Новые автомобили</a></li>
-                        <li><a href="#">Автомобили с пробегом</a></li>
-                        <li><a href="#">Электромобили</a></li>
-                        <li><a href="#">Эксклюзивные модели</a></li>
-                    </ul>
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-bold text-stone-900">Протокол Действий</h2>
+                <p class="text-stone-600 mt-2">
+                    Хватит "пробовать". Мы внедряем систему. Три направления. Никаких турников, никаких денег, только физика.
+                </p>
+            </div>
+
+            <!-- 1. The Body (Apollo) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                <div class="bg-stone-900 p-6 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">1. Тело Аполлона</h3>
+                        <p class="text-stone-400 text-sm">Решение проблемы "нет турника" и "жирота".</p>
+                    </div>
+                    <span class="text-4xl">🏛️</span>
                 </div>
-                
-                <div class="footer-column">
-                    <h4>Услуги</h4>
-                    <ul>
-                        <li><a href="#features">Преимущества</a></li>
-                        <li><a href="#">Трейд-ин</a></li>
-                        <li><a href="#">Лизинг и кредит</a></li>
-                        <li><a href="#">Страхование</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h4>Контакты</h4>
-                    <ul>
-                        <li><a href="#">Москва, ул. Автозаводская, 23</a></li>
-                        <li><a href="tel:+74951234567">+7 (495) 123-45-67</a></li>
-                        <li><a href="mailto:info@lorwaycar.ru">info@lorwaycar.ru</a></li>
-                        <li><a href="#">Часы работы: 9:00-21:00</a></li>
-                    </ul>
+                <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-stone-800">Проблема: Нет турника + Зима</h4>
+                        <p class="text-stone-600 mb-4 text-sm">
+                            Турник — это круто, но для подтягиваний тебе сначала нужно укрепить спину и сбросить вес. С весом 84кг при слабом коре подтягиваться травмоопасно.
+                        </p>
+                        <h4 class="font-bold text-lg mb-4 text-stone-800">Решение: Пол — твой лучший друг</h4>
+                        <ul class="space-y-3 text-sm text-stone-700">
+                            <li class="flex items-start">
+                                <span class="bg-amber-100 text-amber-800 rounded px-2 py-0.5 mr-2 font-bold text-xs mt-0.5">Упр 1</span>
+                                <div><strong>Австралийские подтягивания (под столом).</strong> Найди крепкий стол. Ложись под него, хватайся за край и подтягивай грудь. Это заменит турник на 100% сейчас.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-amber-100 text-amber-800 rounded px-2 py-0.5 mr-2 font-bold text-xs mt-0.5">Упр 2</span>
+                                <div><strong>Берпи (без прыжка).</strong> Упал, отжался, встал. Лучшее для сжигания жира. Делай медленно.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-amber-100 text-amber-800 rounded px-2 py-0.5 mr-2 font-bold text-xs mt-0.5">Упр 3</span>
+                                <div><strong>Планка.</strong> Для твоего "умершего кора". Начни с 20 секунд.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-stone-50 p-6 rounded-xl border border-stone-200">
+                        <h4 class="font-bold text-stone-800 mb-3">Правило "Глупой Простоты"</h4>
+                        <p class="text-sm text-stone-600 mb-4">
+                            Ты срываешься, потому что делаешь час. Твоя задача на первую неделю — делать <strong>смехотворно мало</strong>.
+                        </p>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between bg-white p-3 rounded shadow-sm">
+                                <span>Отжимания</span>
+                                <span class="font-bold text-stone-900">Ровно 5 раз</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-white p-3 rounded shadow-sm">
+                                <span>Приседания</span>
+                                <span class="font-bold text-stone-900">Ровно 10 раз</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-white p-3 rounded shadow-sm">
+                                <span>Планка</span>
+                                <span class="font-bold text-stone-900">Ровно 30 сек</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-red-500 mt-4 font-bold">ЗАПРЕЩЕНО ДЕЛАТЬ БОЛЬШЕ В ПЕРВУЮ НЕДЕЛЮ. Даже если прёт.</p>
+                    </div>
                 </div>
             </div>
+
+            <!-- 2. The Cat (Discipline) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                <div class="bg-amber-900 p-6 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">2. Сфинкс: Твой Тренажер Ответственности</h3>
+                        <p class="text-amber-200 text-sm">Ты забрасываешь бедное животное. Это показатель твоей дисциплины.</p>
+                    </div>
+                    <span class="text-4xl">🐱</span>
+                </div>
+                <div class="p-6 md:p-8">
+                    <p class="text-stone-700 mb-6">
+                        Ты хочешь управлять компаниями и людьми? Начни с кота. Сфинкс требует ухода. Если ты не можешь помыть кота, ты не сможешь построить бизнес.
+                        Сделай кота своим "Якорем".
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-stone-50 p-4 rounded text-center border hover:border-amber-500 transition-colors cursor-pointer" onclick="toggleTask(this)">
+                            <div class="text-sm text-stone-500 mb-1">Ежедневно</div>
+                            <div class="font-bold text-stone-800">Чистая вода</div>
+                            <div class="text-xs text-green-600 mt-2 opacity-0 checkmark">ВЫПОЛНЕНО</div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded text-center border hover:border-amber-500 transition-colors cursor-pointer" onclick="toggleTask(this)">
+                            <div class="text-sm text-stone-500 mb-1">Раз в 3 дня</div>
+                            <div class="font-bold text-stone-800">Протирка глаз/ушей</div>
+                            <div class="text-xs text-green-600 mt-2 opacity-0 checkmark">ВЫПОЛНЕНО</div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded text-center border hover:border-amber-500 transition-colors cursor-pointer" onclick="toggleTask(this)">
+                            <div class="text-sm text-stone-500 mb-1">Раз в неделю</div>
+                            <div class="font-bold text-stone-800">Полная ванна</div>
+                            <div class="text-xs text-green-600 mt-2 opacity-0 checkmark">ВЫПОЛНЕНО</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. The Mind & Wealth (Nietzsche Mode) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                <div class="bg-stone-800 p-6 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">3. Интеллект и Богатство</h3>
+                        <p class="text-stone-400 text-sm">Учеба на 4, но цель — деньги.</p>
+                    </div>
+                    <span class="text-4xl">🧠</span>
+                </div>
+                <div class="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-stone-800">Ловушка: "Сначала школа, потом деньги"</h4>
+                        <p class="text-sm text-stone-600 mb-4">
+                            Ты хочешь заработать. Это отличная мотивация. Но сейчас у тебя нет навыка "делать долго и нудно".
+                            Работа — это 90% рутины.
+                        </p>
+                        <h4 class="font-bold text-lg mb-4 text-stone-800">Твоя стратегия:</h4>
+                        <ul class="list-disc list-inside text-sm text-stone-700 space-y-2">
+                            <li><strong>Астрология как полигон.</strong> Ты любишь астрологию. Начни писать о ней. Не для лайков в ТикТоке, а статьи. Это развивает ораторство (письменное) и структуру мыслей.</li>
+                            <li><strong>Ораторство Ницше.</strong> Читай вслух. 5 минут в день. Любую книгу. Читай громко, с выражением. Записывай на диктофон. Слушай и ужасайся. Исправляй.</li>
+                            <li><strong>Деньги.</strong> Перестань мечтать о миллионах. Найди способ заработать 100 рублей. Любым способом (помощь соседям, продажа старых игр). Первый заработанный рубль изменит твою химию мозга сильнее, чем "дофаминовый детокс".</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col justify-center items-center bg-stone-50 rounded-xl p-6 border border-stone-200">
+                        <h4 class="font-bold text-stone-800 mb-4">Симулятор Прогресса</h4>
+                        <p class="text-xs text-stone-500 mb-4 text-center">Двигай ползунок усилий, чтобы увидеть результат через год.</p>
+                        
+                        <div class="w-full max-w-xs space-y-6">
+                            <div>
+                                <label class="text-xs font-bold text-stone-600">Уровень усилий (Консистенция)</label>
+                                <input type="range" id="effortRange" min="1" max="100" value="10" class="w-full h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                                <div class="flex justify-between text-xs text-stone-500 mt-1">
+                                    <span>Срывы (10%)</span>
+                                    <span>Робот (100%)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded shadow text-center">
+                                <div class="text-xs text-stone-400 uppercase tracking-widest">Результат</div>
+                                <div id="resultOutput" class="text-2xl font-extrabold text-stone-900 mt-1">Ничего не изменится</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        
-        <div class="copyright">
-            <p>&copy; 2024 LORWAY CAR. Все права защищены.</p>
-            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">Официальный дилер Porsche, Mercedes-Benz, BMW, Audi, Lexus.</p>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 py-8 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="mb-2 font-bold text-white">ПРОЕКТ АПОЛЛОН</p>
+            <p class="text-sm">Создано для Машины Будущего. День рождения: 24.01.2012.</p>
+            <p class="text-xs mt-4 opacity-50">Scientific Anti-Lazy Protocol v1.0</p>
         </div>
     </footer>
 
     <script>
-        // Создание плавающих частиц
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 80;
+        // --- DATA & STATE ---
+        const userStats = {
+            age: 13,
+            weight: 84,
+            height: 181,
+            attempts: "Failed Everything"
+        };
+
+        // --- NAVIGATION ---
+        function switchTab(tabId) {
+            // Hide all sections
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('analysis').classList.add('hidden');
+            document.getElementById('protocol').classList.add('hidden');
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // Случайные параметры
-                const size = Math.random() * 3 + 1;
-                const posX = Math.random() * 100;
-                const delay = Math.random() * 15;
-                const duration = Math.random() * 10 + 15;
-                
-                // Цвета в зеленой палитре
-                const colors = ['#006241', '#00a862', '#00c97c', '#00e696'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${posX}%`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.backgroundColor = color;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-        
-        // Параллакс для фона
-        function parallaxBackground() {
-            const gridBg = document.getElementById('gridBg');
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const rate = scrolled * 0.3;
-                gridBg.style.transform = `translateY(${rate}px)`;
-            });
-        }
-        
-        // Анимация появления элементов при скролле
-        function animateOnScroll() {
-            const modelCards = document.querySelectorAll('.model-card');
-            const featureCards = document.querySelectorAll('.feature-card');
-            const galleryItems = document.querySelectorAll('.gallery-item');
-            const windowHeight = window.innerHeight;
-            
-            modelCards.forEach((card, index) => {
-                const cardPosition = card.getBoundingClientRect().top;
-                
-                if (cardPosition < windowHeight - 100) {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                    card.style.transition = `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
-                }
-            });
-            
-            featureCards.forEach((card, index) => {
-                const cardPosition = card.getBoundingClientRect().top;
-                
-                if (cardPosition < windowHeight - 100) {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                    card.style.transition = `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
-                }
-            });
-            
-            galleryItems.forEach((item, index) => {
-                const itemPosition = item.getBoundingClientRect().top;
-                
-                if (itemPosition < windowHeight - 100) {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                    item.style.transition = `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
-                }
-            });
-        }
-        
-        // Анимация счетчиков
-        function animateCounters() {
-            const yearsCount = document.getElementById('yearsCount');
-            const clientsCount = document.getElementById('clientsCount');
-            const carsSoldCount = document.getElementById('carsSoldCount');
-            const brandsCount = document.getElementById('brandsCount');
-            
-            const statsSection = document.querySelector('.stats');
-            const statsPosition = statsSection.getBoundingClientRect().top;
-            const windowHeight = window.innerHeight;
-            
-            if (statsPosition < windowHeight - 100 && !yearsCount.classList.contains('animated')) {
-                yearsCount.classList.add('animated');
-                clientsCount.classList.add('animated');
-                carsSoldCount.classList.add('animated');
-                brandsCount.classList.add('animated');
-                
-                animateValue(yearsCount, 0, 26, 2000);
-                animateValue(clientsCount, 0, 4200, 2000);
-                animateValue(carsSoldCount, 0, 5800, 2000);
-                animateValue(brandsCount, 0, 12, 2000);
-            }
-        }
-        
-        function animateValue(element, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const value = progress * (end - start) + start;
-                
-                element.textContent = Math.floor(value);
-                
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-        
-        // Параллакс эффект для 3D куба
-        function cubeParallax() {
-            const cube = document.querySelector('.cube-3d');
-            const scrollPosition = window.pageYOffset;
-            const rotation = scrollPosition * 0.02;
-            
-            cube.style.transform = `perspective(1200px) rotateX(-15deg) rotateY(${rotation}deg) rotateZ(0deg)`;
-            
-            // Эффект при наведении
-            cube.addEventListener('mousemove', (e) => {
-                const rect = cube.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateY = (x - centerX) / 50;
-                const rotateX = (centerY - y) / 50;
-                
-                cube.style.transform = `perspective(1200px) rotateX(${-15 + rotateX}deg) rotateY(${rotation + rotateY}deg) rotateZ(0deg)`;
-            });
-            
-            cube.addEventListener('mouseleave', () => {
-                cube.style.transform = `perspective(1200px) rotateX(-15deg) rotateY(${rotation}deg) rotateZ(0deg)`;
-            });
-        }
-        
-        // Mobile menu
-        function initMobileMenu() {
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const navLinks = document.getElementById('navLinks');
-            
-            mobileMenuBtn.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-                mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
-                    ? '<i class="fas fa-times"></i>' 
-                    : '<i class="fas fa-bars"></i>';
-            });
-            
-            // Close menu when clicking on a link
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.addEventListener('click', () => {
-                    navLinks.classList.remove('active');
-                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                });
-            });
-        }
-        
-        // Header scroll effect
-        function headerScrollEffect() {
-            const header = document.getElementById('header');
-            
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 100) {
-                    header.classList.add('scrolled');
+            // Show selected
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // Update Nav Styles
+            const tabs = ['dashboard', 'analysis', 'protocol'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (t === tabId) {
+                    btn.classList.remove('inactive-tab');
+                    btn.classList.add('active-tab');
                 } else {
-                    header.classList.remove('scrolled');
+                    btn.classList.remove('active-tab');
+                    btn.classList.add('inactive-tab');
+                }
+            });
+
+            // Mobile menu close
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- INTERACTION: INSIGHTS ---
+        const insights = {
+            'detox': {
+                title: "Ошибка Дофаминового Детокса",
+                text: "Ты убрал все источники удовольствия (телефон, игры), но не дал мозгу альтернативы. Мозг запаниковал от 'голода' и заставил тебя вернуться к старому. Детокс не работает без замещения. Нужно было убрать ТикТок, но добавить прогулки или вкусную еду."
+            },
+            'bet': {
+                title: "Ошибка Спора на Деньги",
+                text: "500 рублей для друга — это внешняя мотивация. Тебе проще отдать деньги, чем страдать от тренировок. Это значит, что твой мозг оценил 'боль от потери денег' как МЕНЬШУЮ, чем 'боль от работы'. Тебе нужно найти внутреннюю причину, а не внешнюю угрозу."
+            },
+            'tiktok': {
+                title: "Ошибка Публичных Обещаний",
+                text: "Когда ты говоришь 'Я сделаю!' и получаешь лайки, твой мозг УЖЕ получил дофамин, как будто ты это сделал. Ты почувствовал себя крутым авансом. Мотивация падает до нуля, потому что награда уже получена. Никогда не болтай о планах, пока не сделал."
+            }
+        };
+
+        function showInsight(key) {
+            const box = document.getElementById('insight-box');
+            const title = document.getElementById('insight-title');
+            const text = document.getElementById('insight-text');
+
+            title.innerText = insights[key].title;
+            text.innerText = insights[key].text;
+            box.classList.remove('hidden');
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // --- INTERACTION: TASK TOGGLE ---
+        function toggleTask(el) {
+            const check = el.querySelector('.checkmark');
+            if (check.style.opacity === '1') {
+                check.style.opacity = '0';
+                el.classList.remove('border-green-500', 'bg-green-50');
+            } else {
+                check.style.opacity = '1';
+                el.classList.add('border-green-500', 'bg-green-50');
+            }
+        }
+
+        // --- INTERACTION: SLIDER ---
+        const slider = document.getElementById('effortRange');
+        const output = document.getElementById('resultOutput');
+
+        if(slider) {
+            slider.addEventListener('input', function() {
+                const val = this.value;
+                if (val < 20) {
+                    output.innerText = "Ничего не изменится (Срыв)";
+                    output.className = "text-2xl font-extrabold text-stone-400 mt-1";
+                } else if (val < 50) {
+                    output.innerText = "Минус 2 кг, но нервный срыв";
+                    output.className = "text-2xl font-extrabold text-red-600 mt-1";
+                } else if (val < 80) {
+                    output.innerText = "Аполлон (Начало формы)";
+                    output.className = "text-2xl font-extrabold text-amber-600 mt-1";
+                } else {
+                    output.innerText = "МАШИНА (Сверхчеловек)";
+                    output.className = "text-2xl font-extrabold text-green-600 mt-1";
                 }
             });
         }
-        
-        // Форма тест-драйва
-        function initTestDriveForm() {
-            const form = document.getElementById('testDriveForm');
-            
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                // Создаем модальное окно успешной отправки
-                const modal = document.createElement('div');
-                modal.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.95);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 2000;
-                    backdrop-filter: blur(10px);
-                `;
-                
-                modal.innerHTML = `
-                    <div style="background: rgba(20, 25, 22, 0.95); padding: 50px; border-radius: 20px; max-width: 500px; width: 90%; border: 1px solid rgba(0, 168, 98, 0.3); position: relative; text-align: center;">
-                        <div style="width: 80px; height: 80px; background: rgba(0, 168, 98, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;">
-                            <i class="fas fa-car" style="color: var(--accent); font-size: 36px;"></i>
-                        </div>
-                        <h3 style="font-size: 2rem; margin-bottom: 20px; color: var(--accent);">Тест-драйв забронирован!</h3>
-                        <p style="margin-bottom: 30px; color: var(--text); font-size: 1.1rem;">Ваш запрос на тест-драйв успешно отправлен.</p>
-                        <p style="color: var(--text-secondary); margin-bottom: 30px;">Наш менеджер свяжется с вами в течение 2 часов для подтверждения деталей и согласования времени.</p>
-                        <button id="closeModal" style="background: var(--gradient-green-light); color: white; border: none; padding: 15px 40px; border-radius: 50px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.3s ease;">Отлично</button>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                
-                // Сбрасываем форму
-                form.reset();
-                
-                // Закрытие модального окна
-                document.getElementById('closeModal').addEventListener('click', () => {
-                    document.body.removeChild(modal);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-                
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        document.body.removeChild(modal);
-                    }
-                });
-            });
-        }
-        
-        // Плавная навигация
-        function initSmoothScroll() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-        }
-        
-        // Интерактивность для карточек
-        function initCardInteractivity() {
-            document.querySelectorAll('.model-card, .feature-card, .gallery-item').forEach(card => {
-                card.addEventListener('mousemove', function(e) {
-                    const rect = this.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateY = (x - centerX) / 25;
-                    const rotateX = (centerY - y) / 25;
-                    
-                    this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
-                });
-            });
-        }
-        
-        // Инициализация
+
+        // --- CHARTS INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', function() {
-            // Создаем частицы
-            createParticles();
             
-            // Инициализация параллакса
-            parallaxBackground();
-            
-            // Инициализация мобильного меню
-            initMobileMenu();
-            
-            // Инициализация эффектов скролла
-            headerScrollEffect();
-            
-            // Инициализация плавной прокрутки
-            initSmoothScroll();
-            
-            // Инициализация формы
-            initTestDriveForm();
-            
-            // Инициализация интерактивности карточек
-            initCardInteractivity();
-            
-            // Запускаем анимации при скролле
-            window.addEventListener('scroll', () => {
-                animateOnScroll();
-                cubeParallax();
-                animateCounters();
-            });
-            
-            // Запускаем начальную анимацию
-            setTimeout(animateOnScroll, 500);
-            setTimeout(animateCounters, 1000);
-            
-            // Анимация для кнопок
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.addEventListener('mouseenter', function(e) {
-                    const x = e.pageX - this.offsetLeft;
-                    const y = e.pageY - this.offsetTop;
-                    
-                    const ripple = document.createElement('span');
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    ripple.classList.add('ripple');
-                    
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 1000);
-                });
-            });
-            
-            // Добавляем эффект печатающего текста для заголовка
-            const heroTitle = document.querySelector('.hero-title');
-            const originalText = heroTitle.textContent;
-            heroTitle.textContent = '';
-            
-            let i = 0;
-            const typeWriter = () => {
-                if (i < originalText.length) {
-                    heroTitle.textContent += originalText.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 50);
+            // 1. Radar Chart: Stats
+            const ctxStats = document.getElementById('statsChart').getContext('2d');
+            new Chart(ctxStats, {
+                type: 'radar',
+                data: {
+                    labels: ['Сила (Тело)', 'Дисциплина (Воля)', 'Интеллект', 'Богатство', 'Уход (Кот/Себя)'],
+                    datasets: [{
+                        label: 'Текущий (Ты)',
+                        data: [20, 10, 60, 5, 10], // Based on description: fat, lazy, smartish, poor, neglects cat
+                        backgroundColor: 'rgba(28, 25, 23, 0.2)',
+                        borderColor: 'rgba(28, 25, 23, 1)',
+                        pointBackgroundColor: 'rgba(28, 25, 23, 1)',
+                        borderWidth: 2
+                    }, {
+                        label: 'Цель (Аполлон)',
+                        data: [90, 100, 95, 90, 100],
+                        backgroundColor: 'rgba(217, 119, 6, 0.2)',
+                        borderColor: 'rgba(217, 119, 6, 1)',
+                        pointBackgroundColor: 'rgba(217, 119, 6, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#E5E7EB' },
+                            grid: { color: '#E5E7EB' },
+                            pointLabels: {
+                                font: { size: 12, family: 'Inter' },
+                                color: '#4B5563'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
                 }
-            };
-            
-            // Запускаем эффект печати с задержкой
-            setTimeout(typeWriter, 1000);
+            });
+
+            // 2. Line Chart: Motivation Cycle
+            const ctxMot = document.getElementById('motivationChart').getContext('2d');
+            new Chart(ctxMot, {
+                type: 'line',
+                data: {
+                    labels: ['День 1', 'День 2', 'День 3', 'День 4', 'День 5', 'День 6', 'День 7'],
+                    datasets: [{
+                        label: 'Твой обычный цикл (Взрыв и Смерть)',
+                        data: [100, 40, 10, 0, 0, 5, 0], // The crash
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Нужный график (Малые шаги)',
+                        data: [20, 22, 25, 28, 30, 32, 35], // Gradual growth
+                        borderColor: '#059669',
+                        borderDash: [5, 5],
+                        tension: 0.1,
+                        fill: false,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: '% Энергии / Мотивации' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if(context.dataset.label.includes('Твой')) {
+                                        if(context.dataIndex === 0) return "День 1: 'Я сделаю все!' (100%)";
+                                        if(context.dataIndex === 2) return "День 3: 'Устал, сделаю завтра' (10%)";
+                                    }
+                                    return context.formattedValue + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         });
+
     </script>
 </body>
 </html>
