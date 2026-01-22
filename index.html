@@ -3,565 +3,709 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Проект Аполлон: Протокол Трансформации</title>
+    <title>TITAN_OS // ULTIMATE ARCHIVE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #F5F5F4; color: #1C1917; }
-        .chart-container { 
-            position: relative; 
-            width: 100%; 
-            max-width: 600px; 
-            margin-left: auto; 
-            margin-right: auto; 
-            height: 300px; 
-            max-height: 400px; 
-        } 
-        @media (min-width: 768px) { 
-            .chart-container { height: 350px; } 
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Inter:wght@400;600;900&display=swap');
+
+        /* --- SYSTEM THEME: DEEP VOID --- */
+        :root {
+            --bg-deep: #000000;
+            --bg-panel: #0a0a0a;
+            --border: #27272a;
+            --primary: #10b981; /* Emerald */
+            --primary-dim: rgba(16, 185, 129, 0.05);
+            --text-main: #e4e4e7;
+            --text-mute: #71717a;
+            --accent-red: #ef4444;
+            --accent-gold: #f59e0b;
+            --accent-blue: #3b82f6;
         }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid #E7E5E4;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow: hidden;
         }
-        .active-tab {
-            border-bottom: 3px solid #D97706;
-            color: #D97706;
-            font-weight: 600;
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* --- SCROLLBARS --- */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: var(--bg-deep); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- UI COMPONENTS --- */
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 0.85rem;
+            color: var(--text-mute);
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: 'JetBrains Mono', monospace;
         }
-        .inactive-tab {
-            color: #78716C;
-            border-bottom: 3px solid transparent;
+        .sidebar-btn:hover { background: rgba(255,255,255,0.03); color: white; }
+        .sidebar-btn.active {
+            background: var(--primary-dim);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 800;
         }
-        .inactive-tab:hover {
-            color: #44403C;
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
         }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .content-block {
+            line-height: 1.7;
+            color: #d4d4d8;
+            font-size: 0.95rem;
+        }
+        
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 20px 0;
+        }
+        .table-custom th {
+            text-align: left;
+            padding: 12px;
+            background: #18181b;
+            color: #a1a1aa;
+            border: 1px solid var(--border);
+        }
+        .table-custom td {
+            padding: 12px;
+            border: 1px solid var(--border);
+            color: #e4e4e7;
+        }
+        .table-custom tr:nth-child(even) { background: #0e0e10; }
+
+        /* Accordion Styles */
+        details {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        details summary {
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #18181b;
+            transition: background 0.2s;
+        }
+        details summary:hover { background: #27272a; }
+        details[open] summary { border-bottom: 1px solid #333; color: var(--primary); }
+        .details-content { padding: 20px; background: #0c0c0e; }
+
+        .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 150px; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
-    <!-- Chosen Palette: Warm Neutrals (Stone) with Amber Accents. Minimalistic, stoic, and focused. -->
-    <!-- Application Structure Plan: 
-         1. Dashboard (HUD): Overview of current "character stats" based on user input (13yo, 84kg, 181cm) vs Target.
-         2. Diagnosis Module: Interactive analysis of why previous attempts (dopamine detox, 5-min rule) failed.
-         3. Bio-Mechanics (The "Course"): Scientific explanation of laziness as energy conservation + the solution (Micro-Habit Stacking, not motivation).
-         4. Action Protocols: 
-            - Body (No bar workout logic)
-            - Mind (Wealth/Intellect)
-            - Responsibility (The Cat/Self-care)
-         5. Daily Quest Log: A gamified tracker to start the momentum.
-    -->
-    <!-- Visualization & Content Choices:
-         - Radar Chart: To visualize "Character Attributes" (Strength, Intellect, Discipline, Wealth) - Current vs Potential. Goal: Show the gap and potential.
-         - Line Chart: To simulate "Motivation vs Discipline" over time (The Crash Curve). Goal: Explain why he quits after 3 days.
-         - Interactive Cards: For the Workout and Cat Care protocols. Goal: Organizing tasks without overwhelming.
-         - Justification: Users with ADHD/Lazy tendencies need immediate visual feedback and clear, bite-sized structures.
-         - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body class="bg-stone-100 min-h-screen">
+<body class="flex h-screen w-screen">
 
-    <!-- Navigation -->
-    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center">
-                    <span class="text-2xl font-extrabold tracking-tight text-stone-800">ПРОЕКТ <span class="text-amber-600">АПОЛЛОН</span></span>
-                </div>
-                <div class="hidden md:flex space-x-8">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="active-tab px-1 pt-1 text-sm font-medium transition-colors">Статус</button>
-                    <button onclick="switchTab('analysis')" id="nav-analysis" class="inactive-tab px-1 pt-1 text-sm font-medium transition-colors">Анализ Сбоев</button>
-                    <button onclick="switchTab('protocol')" id="nav-protocol" class="inactive-tab px-1 pt-1 text-sm font-medium transition-colors">Протокол Действий</button>
-                </div>
-                <!-- Mobile Menu Button (Simple) -->
-                <div class="md:hidden">
-                    <button onclick="toggleMobileMenu()" class="text-stone-500 hover:text-stone-800 font-bold">МЕНЮ</button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-stone-200">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <button onclick="switchTab('dashboard')" class="block w-full text-left px-3 py-2 text-stone-700 font-medium hover:bg-stone-50">Статус</button>
-                <button onclick="switchTab('analysis')" class="block w-full text-left px-3 py-2 text-stone-700 font-medium hover:bg-stone-50">Анализ Сбоев</button>
-                <button onclick="switchTab('protocol')" class="block w-full text-left px-3 py-2 text-stone-700 font-medium hover:bg-stone-50">Протокол</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content Area -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <!-- DASHBOARD SECTION -->
-        <div id="dashboard" class="space-y-8">
-            <div class="text-center max-w-3xl mx-auto mb-10">
-                <h1 class="text-3xl font-bold text-stone-900 mb-4">Панель Управления: Субъект "Макс"</h1>
-                <p class="text-lg text-stone-600">
-                    Добро пожаловать в центр управления твоей трансформацией. Здесь мы анализируем текущие показатели и строим маршрут к версии "Аполлон".
-                    Твоя цель — стать машиной. Машины не используют "мотивацию", они используют системы.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Stats Radar -->
-                <div class="glass-panel p-6 rounded-xl">
-                    <div class="mb-4">
-                        <h2 class="text-xl font-bold text-stone-800">Текущий Анализ Характеристик</h2>
-                        <p class="text-sm text-stone-500">Сравнение текущего состояния (Синий) с Целевым (Оранжевый).</p>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="statsChart"></canvas>
-                    </div>
-                    <div class="mt-4 text-xs text-stone-400 text-center">
-                        * Данные основаны на твоем отчете: 13 лет, 84кг, 181см, опыт срывов.
-                    </div>
-                </div>
-
-                <!-- Bio-Data Card -->
-                <div class="glass-panel p-6 rounded-xl flex flex-col justify-between">
-                    <div>
-                        <h2 class="text-xl font-bold text-stone-800 mb-4">Биометрия & Цели</h2>
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
-                                <span class="text-stone-500">Возраст</span>
-                                <span class="font-bold text-stone-800">13 (почти 14)</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
-                                <span class="text-stone-500">Рост / Вес</span>
-                                <span class="font-bold text-stone-800">181 см / 84 кг</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
-                                <span class="text-stone-500">Телосложение</span>
-                                <span class="font-bold text-amber-600">Требуется рекомпозиция</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-stone-200 pb-2">
-                                <span class="text-stone-500">Статус Дисциплины</span>
-                                <span class="font-bold text-red-600">Критический (Срывы &lt; 3 дней)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-6 bg-amber-50 p-4 rounded-lg border border-amber-100">
-                        <h3 class="font-bold text-amber-800 mb-2">Миссия:</h3>
-                        <p class="text-sm text-amber-700 italic">"Стать накаченной, сильной, умной, богатой машиной. Оратор как Ницше, тело как Аполлон."</p>
-                    </div>
-                    <button onclick="switchTab('analysis')" class="mt-6 w-full py-3 bg-stone-900 text-white font-bold rounded-lg hover:bg-stone-700 transition-all">
-                        НАЧАТЬ ДИАГНОСТИКУ >>
-                    </button>
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-black border-r border-[#1f1f1f] flex flex-col flex-shrink-0 z-50">
+        <div class="p-6 border-b border-[#1f1f1f]">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-microchip text-green-500 text-2xl"></i>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tighter text-white mono">TITAN_OS <span class="text-xs align-top text-gray-500">v9.9</span></h1>
+                    <div class="text-[10px] text-gray-500 mono">ARCHIVE MODE</div>
                 </div>
             </div>
         </div>
 
-        <!-- ANALYSIS SECTION -->
-        <div id="analysis" class="hidden space-y-8">
-            <div class="max-w-4xl mx-auto">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-stone-900 mb-4">Почему "Ничего не работает"?</h2>
-                    <p class="text-stone-600">
-                        Ты пробовал "правило 5 минут", споры на деньги, ТикТок, дофаминовый детокс. Исход один: кровать.
-                        Давай разберем это научно. Это не потому, что ты "слабый". Это ошибка нейрохимии.
-                    </p>
-                </div>
+        <nav class="flex-1 overflow-y-auto py-4 custom-scroll space-y-1">
+            <div class="px-5 py-2 text-[10px] font-bold text-gray-600 mt-2 tracking-widest">ЯДРО СИСТЕМЫ</div>
+            <button onclick="openTab('dashboard')" id="btn-dashboard" class="sidebar-btn active"><i class="fas fa-chart-pie w-5 mr-2"></i> ГЛАВНАЯ</button>
+            <button onclick="openTab('zero_hero')" id="btn-zero_hero" class="sidebar-btn text-amber-500"><i class="fas fa-meteor w-5 mr-2"></i> 0. ДИСЦИПЛИНА (С НУЛЯ)</button>
 
-                <!-- The Cycle of Failure Chart -->
-                <div class="glass-panel p-6 rounded-xl mb-8">
-                    <h3 class="text-lg font-bold text-stone-800 mb-2">Цикл "Всплеск-Крах" (The Crash Cycle)</h3>
-                    <p class="text-sm text-stone-500 mb-4">Это график твоей мотивации в типичную неделю.</p>
-                    <div class="chart-container">
-                        <canvas id="motivationChart"></canvas>
-                    </div>
-                    <div class="mt-4 bg-stone-50 p-4 rounded text-sm text-stone-700 border-l-4 border-red-500">
-                        <strong>Вердикт:</strong> Ты сжигаешь весь свой запас воли в первый день ("делаю час вместо 5 минут").
-                        Мозг воспринимает это как стресс. На следующий день он включает защитный механизм — лень.
-                        Лень — это не порок, это <em>предохранитель</em> от перегрева.
-                    </div>
-                </div>
-
-                <!-- Interaction: Why Methods Failed -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white p-5 rounded-lg shadow-sm border border-stone-200 cursor-pointer hover:border-amber-400 transition-all" onclick="showInsight('detox')">
-                        <div class="text-2xl mb-2">🧘‍♂️</div>
-                        <h4 class="font-bold">Дофаминовый Детокс</h4>
-                        <p class="text-xs text-stone-500 mt-1">Почему не сработал?</p>
-                    </div>
-                    <div class="bg-white p-5 rounded-lg shadow-sm border border-stone-200 cursor-pointer hover:border-amber-400 transition-all" onclick="showInsight('bet')">
-                        <div class="text-2xl mb-2">💸</div>
-                        <h4 class="font-bold">Спор на деньги</h4>
-                        <p class="text-xs text-stone-500 mt-1">Почему не сработал?</p>
-                    </div>
-                    <div class="bg-white p-5 rounded-lg shadow-sm border border-stone-200 cursor-pointer hover:border-amber-400 transition-all" onclick="showInsight('tiktok')">
-                        <div class="text-2xl mb-2">📱</div>
-                        <h4 class="font-bold">Публичные обещания</h4>
-                        <p class="text-xs text-stone-500 mt-1">Почему не сработал?</p>
-                    </div>
-                </div>
-
-                <!-- Dynamic Insight Box -->
-                <div id="insight-box" class="mt-6 p-6 bg-stone-800 text-stone-100 rounded-lg hidden">
-                    <h4 id="insight-title" class="text-xl font-bold mb-2 text-amber-400"></h4>
-                    <p id="insight-text" class="leading-relaxed"></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- PROTOCOL SECTION -->
-        <div id="protocol" class="hidden space-y-12">
+            <div class="px-5 py-2 text-[10px] font-bold text-gray-600 mt-6 tracking-widest">БАЗА ЗНАНИЙ</div>
+            <button onclick="openTab('media')" id="btn-media" class="sidebar-btn"><i class="fas fa-tower-broadcast w-5 mr-2"></i> 1. МЕДИА-ИМПЕРИЯ (КУРС)</button>
+            <button onclick="openTab('bio')" id="btn-bio" class="sidebar-btn"><i class="fas fa-dna w-5 mr-2"></i> 2. БИО-ИНЖЕНЕРИЯ</button>
+            <button onclick="openTab('intellect')" id="btn-intellect" class="sidebar-btn"><i class="fas fa-brain w-5 mr-2"></i> 3. ИНТЕЛЛЕКТ & ШКОЛА</button>
             
-            <div class="text-center max-w-3xl mx-auto">
-                <h2 class="text-3xl font-bold text-stone-900">Протокол Действий</h2>
-                <p class="text-stone-600 mt-2">
-                    Хватит "пробовать". Мы внедряем систему. Три направления. Никаких турников, никаких денег, только физика.
-                </p>
-            </div>
+            <div class="px-5 py-2 text-[10px] font-bold text-gray-600 mt-6 tracking-widest">ПОДДЕРЖКА</div>
+            <button onclick="openTab('sphynx')" id="btn-sphynx" class="sidebar-btn"><i class="fas fa-cat w-5 mr-2"></i> 4. ПРОТОКОЛ СФИНКС</button>
+            <button onclick="openTab('logs')" id="btn-logs" class="sidebar-btn"><i class="fas fa-clipboard-list w-5 mr-2"></i> ЖУРНАЛ ПРОГРЕССА</button>
+        </nav>
+    </aside>
 
-            <!-- 1. The Body (Apollo) -->
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
-                <div class="bg-stone-900 p-6 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-2xl font-bold text-white">1. Тело Аполлона</h3>
-                        <p class="text-stone-400 text-sm">Решение проблемы "нет турника" и "жирота".</p>
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 bg-black h-full relative overflow-hidden">
+
+        <!-- ================= DASHBOARD ================= -->
+        <div id="dashboard" class="tab-content active custom-scroll p-8 md:p-12">
+            <div class="max-w-6xl mx-auto">
+                <header class="mb-12 border-b border-gray-800 pb-8">
+                    <h2 class="text-4xl font-black text-white mb-2 tracking-tight">ЦЕНТР УПРАВЛЕНИЯ</h2>
+                    <p class="text-gray-400 mono text-sm">ОБЪЕКТ: МАКС | ВОЗРАСТ: 14 | ЦЕЛЬ: АПОЛЛОН</p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Status Card -->
+                    <div class="panel col-span-2">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-white"><i class="fas fa-heartbeat text-red-500 mr-2"></i> ТЕКУЩИЕ ПОКАЗАТЕЛИ</h3>
+                            <span class="text-xs bg-green-900/30 text-green-400 px-2 py-1 rounded border border-green-900 mono">ONLINE</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                            <div class="bg-[#111] p-4 rounded border border-[#222]">
+                                <div class="text-xs text-gray-500 mb-1">ВЕС</div>
+                                <div class="text-2xl font-bold text-white">84 <span class="text-sm font-normal text-gray-600">кг</span></div>
+                            </div>
+                            <div class="bg-[#111] p-4 rounded border border-[#222]">
+                                <div class="text-xs text-gray-500 mb-1">РОСТ</div>
+                                <div class="text-2xl font-bold text-white">181 <span class="text-sm font-normal text-gray-600">см</span></div>
+                            </div>
+                            <div class="bg-[#111] p-4 rounded border border-[#222]">
+                                <div class="text-xs text-gray-500 mb-1">БАЛАНС</div>
+                                <div class="text-2xl font-bold text-white">0 <span class="text-sm font-normal text-gray-600">₽</span></div>
+                            </div>
+                            <div class="bg-[#111] p-4 rounded border border-[#222]">
+                                <div class="text-xs text-gray-500 mb-1">ДИСЦИПЛИНА</div>
+                                <div class="text-2xl font-bold text-red-500">1%</div>
+                            </div>
+                        </div>
+                        <div class="mt-6 h-64 relative w-full flex justify-center">
+                            <canvas id="dashboardChart"></canvas>
+                        </div>
                     </div>
-                    <span class="text-4xl">🏛️</span>
-                </div>
-                <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="font-bold text-lg mb-4 text-stone-800">Проблема: Нет турника + Зима</h4>
-                        <p class="text-stone-600 mb-4 text-sm">
-                            Турник — это круто, но для подтягиваний тебе сначала нужно укрепить спину и сбросить вес. С весом 84кг при слабом коре подтягиваться травмоопасно.
-                        </p>
-                        <h4 class="font-bold text-lg mb-4 text-stone-800">Решение: Пол — твой лучший друг</h4>
-                        <ul class="space-y-3 text-sm text-stone-700">
-                            <li class="flex items-start">
-                                <span class="bg-amber-100 text-amber-800 rounded px-2 py-0.5 mr-2 font-bold text-xs mt-0.5">Упр 1</span>
-                                <div><strong>Австралийские подтягивания (под столом).</strong> Найди крепкий стол. Ложись под него, хватайся за край и подтягивай грудь. Это заменит турник на 100% сейчас.</div>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="bg-amber-100 text-amber-800 rounded px-2 py-0.5 mr-2 font-bold text-xs mt-0.5">Упр 2</span>
-                                <div><strong>Берпи (без прыжка).</strong> Упал, отжался, встал. Лучшее для сжигания жира. Делай медленно.</div>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="bg-amber-100 text-amber-800 rounded px-2 py-0.5 mr-2 font-bold text-xs mt-0.5">Упр 3</span>
-                                <div><strong>Планка.</strong> Для твоего "умершего кора". Начни с 20 секунд.</div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="bg-stone-50 p-6 rounded-xl border border-stone-200">
-                        <h4 class="font-bold text-stone-800 mb-3">Правило "Глупой Простоты"</h4>
-                        <p class="text-sm text-stone-600 mb-4">
-                            Ты срываешься, потому что делаешь час. Твоя задача на первую неделю — делать <strong>смехотворно мало</strong>.
-                        </p>
+
+                    <!-- Daily Missions -->
+                    <div class="panel bg-gradient-to-br from-[#0a0a0a] to-[#111]">
+                        <h3 class="text-lg font-bold text-white mb-6"><i class="fas fa-tasks text-blue-500 mr-2"></i> ЕЖЕДНЕВНЫЙ ЧЕК</h3>
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between bg-white p-3 rounded shadow-sm">
-                                <span>Отжимания</span>
-                                <span class="font-bold text-stone-900">Ровно 5 раз</span>
-                            </div>
-                            <div class="flex items-center justify-between bg-white p-3 rounded shadow-sm">
-                                <span>Приседания</span>
-                                <span class="font-bold text-stone-900">Ровно 10 раз</span>
-                            </div>
-                            <div class="flex items-center justify-between bg-white p-3 rounded shadow-sm">
-                                <span>Планка</span>
-                                <span class="font-bold text-stone-900">Ровно 30 сек</span>
-                            </div>
-                        </div>
-                        <p class="text-xs text-red-500 mt-4 font-bold">ЗАПРЕЩЕНО ДЕЛАТЬ БОЛЬШЕ В ПЕРВУЮ НЕДЕЛЮ. Даже если прёт.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. The Cat (Discipline) -->
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
-                <div class="bg-amber-900 p-6 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-2xl font-bold text-white">2. Сфинкс: Твой Тренажер Ответственности</h3>
-                        <p class="text-amber-200 text-sm">Ты забрасываешь бедное животное. Это показатель твоей дисциплины.</p>
-                    </div>
-                    <span class="text-4xl">🐱</span>
-                </div>
-                <div class="p-6 md:p-8">
-                    <p class="text-stone-700 mb-6">
-                        Ты хочешь управлять компаниями и людьми? Начни с кота. Сфинкс требует ухода. Если ты не можешь помыть кота, ты не сможешь построить бизнес.
-                        Сделай кота своим "Якорем".
-                    </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-stone-50 p-4 rounded text-center border hover:border-amber-500 transition-colors cursor-pointer" onclick="toggleTask(this)">
-                            <div class="text-sm text-stone-500 mb-1">Ежедневно</div>
-                            <div class="font-bold text-stone-800">Чистая вода</div>
-                            <div class="text-xs text-green-600 mt-2 opacity-0 checkmark">ВЫПОЛНЕНО</div>
-                        </div>
-                        <div class="bg-stone-50 p-4 rounded text-center border hover:border-amber-500 transition-colors cursor-pointer" onclick="toggleTask(this)">
-                            <div class="text-sm text-stone-500 mb-1">Раз в 3 дня</div>
-                            <div class="font-bold text-stone-800">Протирка глаз/ушей</div>
-                            <div class="text-xs text-green-600 mt-2 opacity-0 checkmark">ВЫПОЛНЕНО</div>
-                        </div>
-                        <div class="bg-stone-50 p-4 rounded text-center border hover:border-amber-500 transition-colors cursor-pointer" onclick="toggleTask(this)">
-                            <div class="text-sm text-stone-500 mb-1">Раз в неделю</div>
-                            <div class="font-bold text-stone-800">Полная ванна</div>
-                            <div class="text-xs text-green-600 mt-2 opacity-0 checkmark">ВЫПОЛНЕНО</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. The Mind & Wealth (Nietzsche Mode) -->
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
-                <div class="bg-stone-800 p-6 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-2xl font-bold text-white">3. Интеллект и Богатство</h3>
-                        <p class="text-stone-400 text-sm">Учеба на 4, но цель — деньги.</p>
-                    </div>
-                    <span class="text-4xl">🧠</span>
-                </div>
-                <div class="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="font-bold text-lg mb-4 text-stone-800">Ловушка: "Сначала школа, потом деньги"</h4>
-                        <p class="text-sm text-stone-600 mb-4">
-                            Ты хочешь заработать. Это отличная мотивация. Но сейчас у тебя нет навыка "делать долго и нудно".
-                            Работа — это 90% рутины.
-                        </p>
-                        <h4 class="font-bold text-lg mb-4 text-stone-800">Твоя стратегия:</h4>
-                        <ul class="list-disc list-inside text-sm text-stone-700 space-y-2">
-                            <li><strong>Астрология как полигон.</strong> Ты любишь астрологию. Начни писать о ней. Не для лайков в ТикТоке, а статьи. Это развивает ораторство (письменное) и структуру мыслей.</li>
-                            <li><strong>Ораторство Ницше.</strong> Читай вслух. 5 минут в день. Любую книгу. Читай громко, с выражением. Записывай на диктофон. Слушай и ужасайся. Исправляй.</li>
-                            <li><strong>Деньги.</strong> Перестань мечтать о миллионах. Найди способ заработать 100 рублей. Любым способом (помощь соседям, продажа старых игр). Первый заработанный рубль изменит твою химию мозга сильнее, чем "дофаминовый детокс".</li>
-                        </ul>
-                    </div>
-                    <div class="flex flex-col justify-center items-center bg-stone-50 rounded-xl p-6 border border-stone-200">
-                        <h4 class="font-bold text-stone-800 mb-4">Симулятор Прогресса</h4>
-                        <p class="text-xs text-stone-500 mb-4 text-center">Двигай ползунок усилий, чтобы увидеть результат через год.</p>
-                        
-                        <div class="w-full max-w-xs space-y-6">
-                            <div>
-                                <label class="text-xs font-bold text-stone-600">Уровень усилий (Консистенция)</label>
-                                <input type="range" id="effortRange" min="1" max="100" value="10" class="w-full h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
-                                <div class="flex justify-between text-xs text-stone-500 mt-1">
-                                    <span>Срывы (10%)</span>
-                                    <span>Робот (100%)</span>
+                            <div class="flex items-center bg-black p-3 rounded border border-[#333]">
+                                <input type="checkbox" class="w-5 h-5 accent-green-500 cursor-pointer mr-3">
+                                <div>
+                                    <div class="text-sm text-white font-bold">Вода Коту</div>
+                                    <div class="text-[10px] text-gray-500">Критический триггер</div>
                                 </div>
                             </div>
-                            
-                            <div class="bg-white p-4 rounded shadow text-center">
-                                <div class="text-xs text-stone-400 uppercase tracking-widest">Результат</div>
-                                <div id="resultOutput" class="text-2xl font-extrabold text-stone-900 mt-1">Ничего не изменится</div>
+                            <div class="flex items-center bg-black p-3 rounded border border-[#333]">
+                                <input type="checkbox" class="w-5 h-5 accent-green-500 cursor-pointer mr-3">
+                                <div>
+                                    <div class="text-sm text-white font-bold">Правило Пола</div>
+                                    <div class="text-[10px] text-gray-500">Минимум 1 отжимание</div>
+                                </div>
                             </div>
+                            <div class="flex items-center bg-black p-3 rounded border border-[#333]">
+                                <input type="checkbox" class="w-5 h-5 accent-green-500 cursor-pointer mr-3">
+                                <div>
+                                    <div class="text-sm text-white font-bold">Контент-тест</div>
+                                    <div class="text-[10px] text-gray-500">Снять 1 драфт (можно не выкладывать)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 p-4 bg-red-900/10 border border-red-900/30 rounded text-center">
+                            <div class="text-xs text-red-500 font-bold mb-1">ВНИМАНИЕ</div>
+                            <p class="text-[10px] text-gray-400 leading-tight">Если ты сейчас лежишь в кровати и читаешь это — ты уже проигрываешь. Встань. Выпей воды.</p>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <!-- ================= ZERO TO HERO (DISCIPLINE) ================= -->
+        <div id="zero_hero" class="tab-content custom-scroll p-8 md:p-12">
+            <div class="max-w-5xl mx-auto">
+                <header class="mb-10">
+                    <h2 class="text-4xl font-black text-amber-500 mb-4 tracking-tight">0. ПРОТОКОЛ "ФЕНИКС"</h2>
+                    <p class="text-gray-400 text-lg">Реабилитация воли для тех, кто "пробовал всё". Полное руководство по выходу из ямы.</p>
+                </header>
+
+                <div class="highlight-box bg-amber-900/10 border-amber-500">
+                    <strong class="text-white">ДЛЯ КОГО ЭТОТ РАЗДЕЛ:</strong> Для Макса, который начинает в понедельник и бросает в среду. Для тех, у кого дофаминовая система сожжена ТикТоком. Здесь нет мотивации. Здесь только механика.
+                </div>
+
+                <details open>
+                    <summary>ЭТАП 1: ОВОЩНОЙ РЕЖИМ (НЕДЕЛЯ 1)</summary>
+                    <div class="details-content">
+                        <h4 class="text-white font-bold mb-4">Цель: Перестать ненавидеть себя за бездействие.</h4>
+                        <p class="content-block mb-4">
+                            Твоя главная проблема — цикл вины. Ты лежишь -> Винишь себя -> Стресс -> Мозг ищет утешения -> Ты снова лежишь. Надо разорвать цикл.
+                        </p>
+                        <table class="table-custom">
+                            <thead><tr><th>Запрещено</th><th>Разрешено (Обязательно)</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-red-400">Пытаться делать "часовые тренировки".</td>
+                                    <td class="text-green-400">Делать 1 (ОДНО) отжимание в день.</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-red-400">Обещать "завтра начну новую жизнь".</td>
+                                    <td class="text-green-400">Признать: "Я сейчас овощ. Но я овощ, который моет кота".</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-red-400">Ругать себя за ТикТок.</td>
+                                    <td class="text-green-400">Смотреть ТикТок, но ТОЛЬКО СТОЯ. (Физическое неудобство).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>ЭТАП 2: МЕХАНИКА ДВИЖЕНИЯ (НЕДЕЛЯ 2-3)</summary>
+                    <div class="details-content">
+                        <h4 class="text-white font-bold mb-4">Метод "Трейлер"</h4>
+                        <p class="content-block mb-4">
+                            Самое сложное — начать действие (Лимбическое трение). Мы обманываем мозг.
+                            Ты не "идешь учить уроки". Ты просто открываешь учебник и кладешь его на стол. Всё. Можешь уйти.
+                            Но учебник должен лежать открытым. Это "Трейлер" действия.
+                        </p>
+                        <div class="bg-black p-4 border border-zinc-700 rounded mb-4">
+                            <strong class="text-white block mb-2">Алгоритм "5 Секунд" (Модифицированный):</strong>
+                            <ol class="list-decimal pl-5 text-gray-400 space-y-2">
+                                <li>Почувствовал импульс "надо бы встать".</li>
+                                <li>Мозг сразу начнет ныть "ой, потом, холодно, лень".</li>
+                                <li>У тебя есть ровно 5 секунд, пока нытье не победило.</li>
+                                <li>Считай вслух: 5-4-3-2-1.</li>
+                                <li>На счете "1" сделай резкое, тупое движение. Дерни ногой. Скинь одеяло. Кинь телефон на пол. Любое физическое действие, ломающее паралич.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>ЭТАП 3: ДОФАМИНОВЫЙ ДЕТОКС 2.0 (ЖЕСТКИЙ)</summary>
+                    <div class="details-content">
+                        <p class="content-block mb-4">
+                            Ты не можешь наслаждаться книгой, если твой мозг привык к 15-секундным видео. Это как пытаться есть брокколи после тонны сахара. Рецепторы сожжены.
+                        </p>
+                        <h4 class="text-white font-bold mb-2">Инструкция по перезагрузке:</h4>
+                        <ul class="list-disc pl-5 text-gray-400 space-y-3 mb-4">
+                            <li><strong class="text-white">Черно-белый экран:</strong> Поставь телефон в режим оттенков серого (Настройки -> Универсальный доступ). ТикТок станет скучным мгновенно. Это работает биохимически.</li>
+                            <li><strong class="text-white">Удаление приложений:</strong> Снеси ТикТок. Смотри его через браузер (это неудобно, бесит, и ты будешь сидеть там меньше).</li>
+                            <li><strong class="text-white">Терапия Скукой:</strong> Выдели 15 минут в день, когда ты НЕ ДЕЛАЕШЬ НИЧЕГО. Сидишь на стуле и смотришь в стену. Через 10 минут мозг взвоет и захочет делать ХОТЬ ЧТО-ТО, даже учить физику.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>ЭТАП 4: ИДЕНТИФИКАЦИЯ (КТО ТЫ?)</summary>
+                    <div class="details-content">
+                        <p class="content-block">
+                            Ты ведешь себя как ленивый человек, потому что считаешь себя ленивым.
+                            <br>Начни врать себе. Говори перед зеркалом: "Я — дисциплинированная машина".
+                            Когда ты пропускаешь тренировку, твой мозг должен думать: "Странно, это на меня не похоже", а не "Ну, как обычно".
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ================= MEDIA EMPIRE (COURSE) ================= -->
+        <div id="media" class="tab-content custom-scroll p-8 md:p-12">
+            <div class="max-w-5xl mx-auto">
+                <header class="mb-10">
+                    <h2 class="text-4xl font-black text-green-500 mb-4 tracking-tight">1. АРХИТЕКТУРА ВИРАЛЬНОСТИ</h2>
+                    <p class="text-gray-400 text-lg">Фундаментальное руководство 2025-2026. Полная интеграция загруженного курса.</p>
+                </header>
+
+                <div class="panel bg-zinc-900 border-green-900/50">
+                    <h3 class="section-title"><i class="fas fa-brain text-green-500"></i> ГЛАВА 1. НЕЙРОБИОЛОГИЯ ВНИМАНИЯ</h3>
+                    <p class="content-block mb-6">
+                        Борьба за внимание перешла в плоскость нейробиологии. Скроллинг ленты функционально идентичен игровому автомату ("однорукий бандит"). Пользователь не знает, что будет следующим (Переменное вознаграждение), что вызывает выброс дофамина.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="highlight-box">
+                            <strong class="text-white block mb-2">Правило 8 секунд:</strong>
+                            Концентрация внимания сократилась до 8 секунд, но решение о просмотре принимается за <span class="text-green-400 font-bold">0.3 секунды</span>. Если нет "новизны" в первом кадре — свайп.
+                        </div>
+                        <div class="highlight-box border-blue-500 bg-blue-900/10">
+                            <strong class="text-white block mb-2">Метрика Retention:</strong>
+                            Удержание — король. Если видео 30 сек смотрят 15 сек — алгоритм его убивает. Цель — удержание >100% (пересмотры).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3 class="section-title"><i class="fas fa-robot text-purple-500"></i> ГЛАВА 2. АЛГОРИТМЫ & ХОЛОДНЫЙ СТАРТ</h3>
+                    <p class="content-block mb-4">
+                        Как запустить аккаунт с нуля, чтобы не попасть в теневой бан.
+                    </p>
+                    <details>
+                        <summary>ПРОТОКОЛ "РАЗОГРЕВ" (Дни 1-5)</summary>
+                        <div class="details-content">
+                            <ul class="list-disc pl-5 text-gray-300 space-y-3">
+                                <li><strong>Дни 1-3 (Мимикрия):</strong> Не пости ничего. Смотри ленту 30 мин в день. Лайкай ТОЛЬКО свою нишу (Астрологию). Алгоритм должен понять твои интересы. Не используй VPN, который скачет по странам.</li>
+                                <li><strong>Дни 4-5 (Цифровой отпечаток):</strong> Подпишись на 10 топов ниши. Пиши осмысленные комменты (5-10 слов), не смайлики.</li>
+                                <li><strong>Результат:</strong> Твоя лента должна на 90% состоять из астрологии. Теперь можно постить.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    
+                    <h4 class="text-white font-bold mt-6 mb-3">Иерархия Метрик 2025:</h4>
+                    <table class="table-custom">
+                        <thead><tr><th>Метрика</th><th>Важность</th><th>Как получить</th></tr></thead>
+                        <tbody>
+                            <tr><td>Удержание (Retention)</td><td class="text-green-400">ВЫСШАЯ</td><td>Быстрый монтаж, субтитры, визуальная плотность.</td></tr>
+                            <tr><td>Пересмотры (Rewatch)</td><td class="text-green-400">ВЫСШАЯ</td><td>Зацикливание (Loop), скрытый текст (надо остановить, чтобы прочесть).</td></tr>
+                            <tr><td>Шеринг (Shares)</td><td class="text-blue-400">ВЫСОКАЯ</td><td>Жиза ("Это про меня"), Полезность ("Сохрани рецепт").</td></tr>
+                            <tr><td>Лайки</td><td class="text-gray-500">НИЗКАЯ</td><td>Просто приятная картинка. Мало влияет на виральность.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel">
+                    <h3 class="section-title"><i class="fas fa-pen-nib text-amber-500"></i> ГЛАВА 3. КОНТЕНТ-ИНЖЕНЕРИЯ (СЦЕНАРИИ)</h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-white font-bold mb-2">ИСКУССТВО ХУКА (ПЕРВЫЕ 3 СЕК)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-zinc-900 p-4 rounded">
+                                <strong class="text-red-400 block mb-1">Негативная предвзятость:</strong>
+                                "Почему тебе НИКОГДА нельзя встречаться со Скорпионом..." (Мозг боится угрозы).
+                            </div>
+                            <div class="bg-zinc-900 p-4 rounded">
+                                <strong class="text-blue-400 block mb-1">Инсайдерский секрет:</strong>
+                                "Астрологи молчат об этом аспекте 2025 года..." (Любопытство).
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-white font-bold mb-2">МЕТОДЫ "БЕЗОПАСНОГО БАЙТА" (ENGAGEMENT BAIT)</h4>
+                    <p class="content-block mb-4 text-sm">Как заставить людей писать комменты, не выпрашивая их.</p>
+                    <ul class="list-disc pl-5 text-gray-300 space-y-3">
+                        <li><strong>Намеренная ошибка:</strong> Назови очевидную планету неправильно. Или скажи "Весы — самый решительный знак". Люди кинутся исправлять тебя (чувство превосходства).</li>
+                        <li><strong>Спорное мнение (Rage Bait):</strong> "Змееносец — единственный настоящий знак".</li>
+                        <li><strong>Незавершенность:</strong> "Топ 3 знака богачей... 3 место... 2 место..." (Видео обрывается или 1 место показано 0.1 сек).</li>
+                    </ul>
+                </div>
+
+                <div class="panel bg-[#0d0d0d]">
+                    <h3 class="section-title"><i class="fas fa-star text-purple-400"></i> ГЛАВА 4. СПЕЦИАЛИЗАЦИЯ: АСТРОЛОГИЯ</h3>
+                    <p class="content-block mb-6">
+                        Твоя стратегия — <strong class="text-white">Эффект Барнума</strong>. Говори общие вещи так, чтобы каждый думал "Боже, это про меня!".
+                    </p>
+                    
+                    <details>
+                        <summary>ФОРМАТЫ ВИДЕО</summary>
+                        <div class="details-content">
+                            <ol class="list-decimal pl-5 text-gray-300 space-y-4">
+                                <li>
+                                    <strong class="text-white">Faceless (Без лица):</strong>
+                                    Идеально для интровертов. Стоковые видео космоса/неба. Красивые плашки с текстом (Canva). Мистическая музыка.
+                                </li>
+                                <li>
+                                    <strong class="text-white">The Roast (Прожарка):</strong>
+                                    Юмор. "Овен: Сначала делает, потом думает (нет)". Люди любят самоиронию и скидывать друзьям, чтобы посмеяться над ними.
+                                </li>
+                                <li>
+                                    <strong class="text-white">Экспертный (Ницше-стайл):</strong>
+                                    Ты на фоне зеленого экрана с картой. "Посмотрите на Сатурн. Это ваша дисциплина". Говори жестко, авторитетно.
+                                </li>
+                            </ol>
+                        </div>
+                    </details>
+                    
+                    <div class="mt-6 bg-purple-900/10 border border-purple-500/30 p-4 rounded">
+                        <strong class="text-purple-400">SEO-ОПТИМИЗАЦИЯ:</strong>
+                        Алгоритмы читают текст на экране и слышат голос. Всегда используй слова: "гороскоп", "знаки зодиака", "совместимость", "натальная карта". Это выведет тебя в поиск.
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3 class="section-title"><i class="fas fa-video text-pink-500"></i> ГЛАВА 6. ТЕХНИЧЕСКИЙ МОНТАЖ (CAPCUT)</h3>
+                    <p class="content-block mb-4">Монтаж — это упаковка. Видео должно быть динамичным.</p>
+                    <ul class="list-disc pl-5 text-gray-300 space-y-3">
+                        <li><strong>Jump Cuts:</strong> Вырезай все вздохи и паузы. Тишина = Свайп.</li>
+                        <li><strong>Speed Ramps:</strong> Ускоряй скучные моменты, замедляй важные.</li>
+                        <li><strong>Auto-Captions:</strong> Обязательно. Многие смотрят без звука. Выделяй ключевые слова цветом (Желтый/Зеленый).</li>
+                        <li><strong>B-Roll:</strong> Перекрывай свое лицо картинками каждые 3-5 секунд, чтобы глаз зрителя не скучал.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= BIO-ENGINEERING ================= -->
+        <div id="bio" class="tab-content custom-scroll p-8 md:p-12">
+            <div class="max-w-5xl mx-auto">
+                <header class="mb-10">
+                    <h2 class="text-4xl font-black text-blue-500 mb-4 tracking-tight">2. БИО-ИНЖЕНЕРИЯ</h2>
+                    <p class="text-gray-400 text-lg">Полный протокол рекомпозиции тела (84кг -> 75кг Аполлон). Питание, Тренировки, Сон.</p>
+                </header>
+
+                <div class="panel">
+                    <h3 class="section-title"><i class="fas fa-utensils text-blue-400"></i> МОДУЛЬ ПИТАНИЯ: ТОПЛИВО</h3>
+                    <p class="content-block mb-6">
+                        Тебе не нужна диета. Тебе нужен "Протокол Инсулинового Контроля". Жир сжигается, когда инсулин низкий.
+                    </p>
+                    
+                    <h4 class="text-white font-bold mb-3">СХЕМА ПИТАНИЯ (РАСПЕЧАТАТЬ)</h4>
+                    <table class="table-custom">
+                        <thead><tr><th>Время</th><th>Что есть</th><th>Почему</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-white font-bold">ЗАВТРАК (07:00)</td>
+                                <td>Яйца (2-3 шт), Творог, Сыр. <br><span class="text-red-500 font-bold">НЕТ: Каши, Хлеб, Сахар.</span></td>
+                                <td class="text-gray-400 text-xs">Белково-жировой завтрак не поднимает инсулин. Организм продолжает сжигать жир по инерции после сна. Ты будешь сытым и бодрым.</td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-bold">ОБЕД (13:00)</td>
+                                <td>Сложные углеводы (Гречка/Рис/Макароны) + Мясо/Курица + Овощи.</td>
+                                <td class="text-gray-400 text-xs">Топливо для мозга и мышц. Самый плотный прием пищи.</td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-bold">УЖИН (18:30)</td>
+                                <td>Белок (Рыба/Грудка) + Салат. <br><span class="text-red-500 font-bold">НЕТ: Углеводы.</span></td>
+                                <td class="text-gray-400 text-xs">Готовимся ко сну. Углеводы вечером блокируют гормон роста.</td>
+                            </tr>
+                            <tr class="bg-red-900/10">
+                                <td class="text-red-400 font-bold">ПОСЛЕ 19:00</td>
+                                <td class="text-red-400 font-bold">ТОЛЬКО ВОДА.</td>
+                                <td class="text-gray-400 text-xs">Голодное окно 12 часов. В это время ты растешь и худеешь.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel">
+                    <h3 class="section-title"><i class="fas fa-dumbbell text-blue-400"></i> МОДУЛЬ ТРЕНИРОВОК: "ГРАВИТАЦИЯ"</h3>
+                    <p class="content-block mb-4">
+                        Нет турника? Не проблема. Пол — твой лучший тренажер. Программа на 6 месяцев.
+                    </p>
+                    
+                    <details open>
+                        <summary>УРОВЕНЬ 1: "ПРОБУЖДЕНИЕ" (МЕСЯЦ 1)</summary>
+                        <div class="details-content">
+                            <ul class="list-disc pl-5 text-gray-300 space-y-2">
+                                <li><strong>Приседания на стул:</strong> 3 подхода по 15 раз. (Касаешься попой стула и сразу встаешь. Спина прямая).</li>
+                                <li><strong>Отжимания от стола/подоконника:</strong> 3 подхода по 10 раз. (Чем выше руки, тем легче).</li>
+                                <li><strong>Планка:</strong> 3 подхода по 20 секунд. (Если трясет — значит работает).</li>
+                                <li><strong>"Лодочка" (для спины):</strong> Лежа на животе, поднимаешь руки и ноги. 3 подхода по 15 сек.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>УРОВЕНЬ 2: "УКРЕПЛЕНИЕ" (МЕСЯЦ 2-3)</summary>
+                        <div class="details-content">
+                             <ul class="list-disc pl-5 text-gray-300 space-y-2">
+                                <li><strong>Классические приседания:</strong> 4 подхода по 25 раз.</li>
+                                <li><strong>Отжимания с колен:</strong> 4 подхода по 12 раз. Медленно! 3 секунды вниз, 1 вверх.</li>
+                                <li><strong>Австралийские подтягивания:</strong> Лезь под стол, хватайся за край, тянись грудью. 3 по 8. (Это заменит турник).</li>
+                                <li><strong>Берпи (без прыжка):</strong> Упал, отжался, встал. 20 раз подряд.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>УРОВЕНЬ 3: "АПОЛЛОН" (МЕСЯЦ 4+)</summary>
+                        <div class="details-content">
+                             <ul class="list-disc pl-5 text-gray-300 space-y-2">
+                                <li><strong>Приседания с выпрыгиванием:</strong> 4 по 20. (Взрывная сила).</li>
+                                <li><strong>Отжимания классические:</strong> 4 по 20.</li>
+                                <li><strong>Отжимания "Алмазные" (руки вместе):</strong> 3 по 8. (Для трицепса).</li>
+                                <li><strong>Планка:</strong> 2 минуты без остановки.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= INTELLECT ================= -->
+        <div id="intellect" class="tab-content custom-scroll p-8 md:p-12">
+             <div class="max-w-5xl mx-auto">
+                <header class="mb-10">
+                    <h2 class="text-4xl font-black text-purple-500 mb-4 tracking-tight">3. ИНТЕЛЛЕКТ & ЭФФЕКТИВНОСТЬ</h2>
+                    <p class="text-gray-400 text-lg">Как учиться на 4/5, тратя в 2 раза меньше времени. Хакерство школьной системы.</p>
+                </header>
+
+                <div class="panel">
+                    <h3 class="section-title">МЕТОД "ФЕЙНМАНА" (ДЛЯ ОРАТОРА)</h3>
+                    <p class="content-block mb-4">
+                        Ты хочешь быть оратором. Используй школу как тренировку. Не зубри.
+                    </p>
+                    <div class="highlight-box bg-purple-900/10 border-purple-500">
+                        <strong>АЛГОРИТМ:</strong><br>
+                        1. Прочитай параграф (Историю, Биологию).<br>
+                        2. Закрой книгу.<br>
+                        3. Представь, что ты выступаешь перед толпой (или объясняешь 5-летке).<br>
+                        4. Расскажи суть СВОИМИ СЛОВАМИ. Громко. Жестикулируй.<br>
+                        5. Если запнулся — подгляди. Повтори.<br>
+                        <em>Результат: Ты запомнишь навсегда + прокачаешь речь.</em>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="panel">
+                        <h3 class="text-white font-bold mb-4">СИСТЕМА ЗАПИСЕЙ CORNELL</h3>
+                        <p class="text-sm text-gray-400 mb-4">Раздели лист тетради на 3 части.</p>
+                        <div class="border border-white h-48 relative bg-white text-black p-2 text-xs font-mono">
+                            <div class="absolute top-0 left-0 w-1/3 h-3/4 border-r border-black p-1 bg-gray-100">
+                                <strong>КЛЮЧИ:</strong><br>Даты, Термины, Вопросы.
+                            </div>
+                            <div class="absolute top-0 right-0 w-2/3 h-3/4 p-1">
+                                <strong>КОНСПЕКТ:</strong><br>Основной текст урока.<br>Бла бла бла...
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-1/4 border-t border-black p-1 bg-gray-200">
+                                <strong>РЕЗЮМЕ (ВЫВОД):</strong><br>В 2 предложениях, о чем был урок. Самое главное.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <h3 class="text-white font-bold mb-4">ХАКИНГ ЭКЗАМЕНОВ</h3>
+                        <ul class="list-disc pl-5 text-gray-300 space-y-3 text-sm">
+                            <li><strong>Правило Парето:</strong> 20% тем дают 80% вопросов на контрольной. Учи только "жирные" темы.</li>
+                            <li><strong>Контекстная память:</strong> Учи в том состоянии, в котором будешь сдавать. Не учи лежа в кровати (на уроке ты сидишь). Сиди за столом.</li>
+                            <li><strong>Интервальное повторение:</strong> 15 мин сразу после школы > 15 мин вечером > 5 мин утром перед уроком. Это эффективнее, чем 3 часа зубрежки ночью.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SPHYNX PROTOCOL ================= -->
+        <div id="sphynx" class="tab-content custom-scroll p-8 md:p-12">
+            <div class="max-w-4xl mx-auto">
+                 <header class="mb-10">
+                    <h2 class="text-4xl font-black text-pink-500 mb-4 tracking-tight">4. ПРОТОКОЛ "СФИНКС"</h2>
+                    <p class="text-gray-400 text-lg">Забота о коте как высшая форма дисциплины.</p>
+                </header>
+
+                <div class="panel bg-pink-900/10 border-pink-900/30">
+                    <h3 class="section-title"><i class="fas fa-paw text-pink-400"></i> ФИЛОСОФИЯ</h3>
+                    <p class="content-block">
+                        Сфинкс — самое зависимое от человека существо. Он голый. Он мерзнет. Он пачкается.
+                        <br>Если ты забыл про кота — ты предал того, кто слабее тебя.
+                        <br><strong>Твой кот — это твой лейтенант.</strong> Заботься о нем лучше, чем о себе. Это научит тебя ответственности быстрее, чем любая книга.
+                    </p>
+                </div>
+
+                <div class="panel">
+                    <h3 class="section-title">ТЕХНИЧЕСКИЙ РЕГЛАМЕНТ ОБСЛУЖИВАНИЯ</h3>
+                    <table class="table-custom">
+                        <thead><tr><th>Процедура</th><th>Частота</th><th>Инструкция</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-white font-bold">ПОЛНАЯ МОЙКА</td>
+                                <td class="text-pink-400 font-bold">РАЗ В 7 ДНЕЙ (СУББОТА)</td>
+                                <td class="text-xs text-gray-300">Специальный шампунь. Теплая вода. Тщательно мыть складки, хвост и лапы (там скапливается жир). Вытереть насухо и завернуть в плед.</td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-bold">ЧИСТКА ГЛАЗ</td>
+                                <td class="text-pink-400 font-bold">ЕЖЕДНЕВНО (УТРО)</td>
+                                <td class="text-xs text-gray-300">У сфинксов нет ресниц. Грязь летит в глаза. Протирай ватным диском с лосьоном или кипяченой водой.</td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-bold">ЧИСТКА УШЕЙ</td>
+                                <td class="text-pink-400 font-bold">РАЗ В 3 ДНЯ</td>
+                                <td class="text-xs text-gray-300">Уши вырабатывают много секрета. Аккуратно ватной палочкой (не глубоко!).</td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-bold">ВОДА И ЕДА</td>
+                                <td class="text-pink-400 font-bold">ВСЕГДА</td>
+                                <td class="text-xs text-gray-300">Вода должна быть СВЕЖЕЙ. Меняй утром и вечером. Миску мыть, а не просто доливать (там бактерии).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================= LOGS ================= -->
+        <div id="logs" class="tab-content custom-scroll p-8 md:p-12">
+             <div class="max-w-4xl mx-auto">
+                <header class="mb-10">
+                    <h2 class="text-4xl font-black text-gray-200 mb-4 tracking-tight">ЖУРНАЛ ПРОГРЕССА</h2>
+                </header>
+                <div class="panel text-center py-20">
+                    <i class="fas fa-lock text-6xl text-gray-800 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-500 mb-2">МОДУЛЬ ЗАБЛОКИРОВАН</h3>
+                    <p class="text-gray-600">Доступ откроется после выполнения 7 дней "Протокола Феникс" (Раздел 0).</p>
+                </div>
+             </div>
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-stone-900 text-stone-400 py-8 mt-12">
-        <div class="max-w-6xl mx-auto px-4 text-center">
-            <p class="mb-2 font-bold text-white">ПРОЕКТ АПОЛЛОН</p>
-            <p class="text-sm">Создано для Машины Будущего. День рождения: 24.01.2012.</p>
-            <p class="text-xs mt-4 opacity-50">Scientific Anti-Lazy Protocol v1.0</p>
-        </div>
-    </footer>
-
     <script>
-        // --- DATA & STATE ---
-        const userStats = {
-            age: 13,
-            weight: 84,
-            height: 181,
-            attempts: "Failed Everything"
-        };
-
-        // --- NAVIGATION ---
-        function switchTab(tabId) {
-            // Hide all sections
-            document.getElementById('dashboard').classList.add('hidden');
-            document.getElementById('analysis').classList.add('hidden');
-            document.getElementById('protocol').classList.add('hidden');
+        // --- NAVIGATION LOGIC ---
+        function openTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Deactivate all buttons
+            document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active'));
             
-            // Show selected
-            document.getElementById(tabId).classList.remove('hidden');
-
-            // Update Nav Styles
-            const tabs = ['dashboard', 'analysis', 'protocol'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`nav-${t}`);
-                if (t === tabId) {
-                    btn.classList.remove('inactive-tab');
-                    btn.classList.add('active-tab');
-                } else {
-                    btn.classList.remove('active-tab');
-                    btn.classList.add('inactive-tab');
-                }
-            });
-
-            // Mobile menu close
-            document.getElementById('mobile-menu').classList.add('hidden');
+            // Show target
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
-        // --- INTERACTION: INSIGHTS ---
-        const insights = {
-            'detox': {
-                title: "Ошибка Дофаминового Детокса",
-                text: "Ты убрал все источники удовольствия (телефон, игры), но не дал мозгу альтернативы. Мозг запаниковал от 'голода' и заставил тебя вернуться к старому. Детокс не работает без замещения. Нужно было убрать ТикТок, но добавить прогулки или вкусную еду."
-            },
-            'bet': {
-                title: "Ошибка Спора на Деньги",
-                text: "500 рублей для друга — это внешняя мотивация. Тебе проще отдать деньги, чем страдать от тренировок. Это значит, что твой мозг оценил 'боль от потери денег' как МЕНЬШУЮ, чем 'боль от работы'. Тебе нужно найти внутреннюю причину, а не внешнюю угрозу."
-            },
-            'tiktok': {
-                title: "Ошибка Публичных Обещаний",
-                text: "Когда ты говоришь 'Я сделаю!' и получаешь лайки, твой мозг УЖЕ получил дофамин, как будто ты это сделал. Ты почувствовал себя крутым авансом. Мотивация падает до нуля, потому что награда уже получена. Никогда не болтай о планах, пока не сделал."
-            }
-        };
-
-        function showInsight(key) {
-            const box = document.getElementById('insight-box');
-            const title = document.getElementById('insight-title');
-            const text = document.getElementById('insight-text');
-
-            title.innerText = insights[key].title;
-            text.innerText = insights[key].text;
-            box.classList.remove('hidden');
-            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        // --- INTERACTION: TASK TOGGLE ---
-        function toggleTask(el) {
-            const check = el.querySelector('.checkmark');
-            if (check.style.opacity === '1') {
-                check.style.opacity = '0';
-                el.classList.remove('border-green-500', 'bg-green-50');
-            } else {
-                check.style.opacity = '1';
-                el.classList.add('border-green-500', 'bg-green-50');
-            }
-        }
-
-        // --- INTERACTION: SLIDER ---
-        const slider = document.getElementById('effortRange');
-        const output = document.getElementById('resultOutput');
-
-        if(slider) {
-            slider.addEventListener('input', function() {
-                const val = this.value;
-                if (val < 20) {
-                    output.innerText = "Ничего не изменится (Срыв)";
-                    output.className = "text-2xl font-extrabold text-stone-400 mt-1";
-                } else if (val < 50) {
-                    output.innerText = "Минус 2 кг, но нервный срыв";
-                    output.className = "text-2xl font-extrabold text-red-600 mt-1";
-                } else if (val < 80) {
-                    output.innerText = "Аполлон (Начало формы)";
-                    output.className = "text-2xl font-extrabold text-amber-600 mt-1";
-                } else {
-                    output.innerText = "МАШИНА (Сверхчеловек)";
-                    output.className = "text-2xl font-extrabold text-green-600 mt-1";
-                }
-            });
-        }
-
-        // --- CHARTS INITIALIZATION ---
+        // --- DASHBOARD CHART ---
         document.addEventListener('DOMContentLoaded', function() {
-            
-            // 1. Radar Chart: Stats
-            const ctxStats = document.getElementById('statsChart').getContext('2d');
-            new Chart(ctxStats, {
-                type: 'radar',
-                data: {
-                    labels: ['Сила (Тело)', 'Дисциплина (Воля)', 'Интеллект', 'Богатство', 'Уход (Кот/Себя)'],
-                    datasets: [{
-                        label: 'Текущий (Ты)',
-                        data: [20, 10, 60, 5, 10], // Based on description: fat, lazy, smartish, poor, neglects cat
-                        backgroundColor: 'rgba(28, 25, 23, 0.2)',
-                        borderColor: 'rgba(28, 25, 23, 1)',
-                        pointBackgroundColor: 'rgba(28, 25, 23, 1)',
-                        borderWidth: 2
-                    }, {
-                        label: 'Цель (Аполлон)',
-                        data: [90, 100, 95, 90, 100],
-                        backgroundColor: 'rgba(217, 119, 6, 0.2)',
-                        borderColor: 'rgba(217, 119, 6, 1)',
-                        pointBackgroundColor: 'rgba(217, 119, 6, 1)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: '#E5E7EB' },
-                            grid: { color: '#E5E7EB' },
-                            pointLabels: {
-                                font: { size: 12, family: 'Inter' },
-                                color: '#4B5563'
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 100
-                        }
-                    },
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    }
-                }
-            });
-
-            // 2. Line Chart: Motivation Cycle
-            const ctxMot = document.getElementById('motivationChart').getContext('2d');
-            new Chart(ctxMot, {
+            const ctx = document.getElementById('dashboardChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['День 1', 'День 2', 'День 3', 'День 4', 'День 5', 'День 6', 'День 7'],
+                    labels: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
                     datasets: [{
-                        label: 'Твой обычный цикл (Взрыв и Смерть)',
-                        data: [100, 40, 10, 0, 0, 5, 0], // The crash
-                        borderColor: '#EF4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        tension: 0.4,
+                        label: 'Уровень Энергии (Прогноз)',
+                        data: [100, 40, 10, 5, 20, 60, 80],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         fill: true,
-                        borderWidth: 3
-                    },
-                    {
-                        label: 'Нужный график (Малые шаги)',
-                        data: [20, 22, 25, 28, 30, 32, 35], // Gradual growth
-                        borderColor: '#059669',
-                        borderDash: [5, 5],
-                        tension: 0.1,
-                        fill: false,
-                        borderWidth: 3
+                        tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: '% Энергии / Мотивации' }
-                        }
+                        y: { display: false, min: 0, max: 100 },
+                        x: { grid: { display: false }, ticks: { color: '#555' } }
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    if(context.dataset.label.includes('Твой')) {
-                                        if(context.dataIndex === 0) return "День 1: 'Я сделаю все!' (100%)";
-                                        if(context.dataIndex === 2) return "День 3: 'Устал, сделаю завтра' (10%)";
-                                    }
-                                    return context.formattedValue + '%';
-                                }
-                            }
-                        }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         });
-
     </script>
 </body>
 </html>
